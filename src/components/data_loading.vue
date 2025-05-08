@@ -42,8 +42,8 @@ async function get_input_params() {
 
         <!-- slider -->
         <div v-if="param.type == 'slider'" class="d-flex">
-          {{ param.label }}: {{ dataStore.input_params[param.id].toFixed(0) }}
-          <v-slider v-model="dataStore.input_params[param.id]" :min="param.min" :max="param.max"
+          {{ param.label }}: {{ dataStore.input_params[param.id] }}
+          <v-slider v-model="dataStore.input_params[param.id]" :min="param.min" :max="param.max" :step="param.step"
                     density="compact" hide-details single-line style="min-width:200px"/>
         </div>
 
@@ -57,6 +57,12 @@ async function get_input_params() {
         <div v-else-if="param.type == 'select'">
           <v-select v-model="dataStore.input_params[param.id]" :items="param.choices" :label="param.label"
                     density="compact" hide-details single-line class="mb-2"/>
+        </div>
+
+        <!-- multiselect -->
+        <div v-else-if="param.type == 'multiselect'">
+          <v-select v-model="dataStore.input_params[param.id]" :items="param.choices" :label="param.label"
+                    density="compact" hide-details single-line multiple class="mb-2"/>
         </div>
 
       </div>
@@ -67,10 +73,10 @@ async function get_input_params() {
       <h2>Options</h2>
       <div v-for="(param, index) in input_spec.interventions" :key="index">
 
-        <!-- slider -->
+             <!-- slider -->
         <div v-if="param.type == 'slider'" class="d-flex">
-          {{ param.label }}: {{ dataStore.input_params[param.id].toFixed(2) }}
-          <v-slider v-model="dataStore.input_params[param.id]" :min="param.min" :max="param.max"
+          {{ param.label }}: {{ dataStore.input_params[param.id] }}
+          <v-slider v-model="dataStore.input_params[param.id]" :min="param.min" :max="param.max" :step="param.step"
                     density="compact" hide-details single-line style="min-width:200px"/>
         </div>
 
@@ -81,9 +87,15 @@ async function get_input_params() {
         </div>
 
         <!-- select -->
-        <div v-else-if="param.type == 'select'">
+        <div v-else-if="param.type == 'select'" >
           <v-select v-model="dataStore.input_params[param.id]" :items="param.choices" :label="param.label"
                     density="compact" hide-details single-line class="mb-2"/>
+        </div>
+
+        <!-- multiselect -->
+        <div v-else-if="param.type == 'multiselect'">
+          <v-select v-model="dataStore.input_params[param.id]" :items="param.choices" :label="param.label"
+                    density="compact" hide-details single-line multiple class="mb-2"/>
         </div>
 
       </div>

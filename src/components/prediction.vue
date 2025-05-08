@@ -25,6 +25,20 @@ const predict = async () => {
     return acc + curr[1]
   }, 0)
 
+  response.ctrlrules_cleaned = response.ctrlrls.map((rule: any) => {
+    return { "terms": rule[0].map((a: any) => a[0]), "weight": rule[1].toFixed(2),
+      "string": rule[0].map((a: any) => a[0]).join(" & ") + " : " + rule[1].toFixed(2)}
+  })
+
+  response.testrules_cleaned = response.testrls.map((rule: any) => {
+    let string = rule[0].map((a: any) => a[0]).join(" & ") + " : " + rule[1].toFixed(2)
+
+    // check if string is already in control
+    let is_in_control_rules = response.ctrlrules_cleaned.some((r: any) => r.string === string)
+    return { "terms": rule[0].map((a: any) => a[0]), "weight": rule[1].toFixed(2), "new": !is_in_control_rules,
+      "string": string}
+  })
+
   console.log(response)
   dataStore.prediction = response
 }
@@ -37,6 +51,20 @@ const predict = async () => {
 
   <div v-if="dataStore.prediction != null">
 
+    <!-- prediction test -->
+    <div v-if="dataStore.prediction.testprediction != null">
+      <h2> Test Prediction</h2>
+      <p>{{ dataStore.prediction.testprediction }}</p>
+    </div>
+
+    <!-- rules test -->
+    <div v-if="dataStore.prediction.testrls != null">
+      <h2> Test Rules</h2>
+      <div v-for="(rule, index) in dataStore.prediction.testrules_cleaned.filter((a:any) => a.new)" :key="index">
+        <p>{{ rule.string }}</p>
+      </div>
+    </div>
+
     <!-- prediction control -->
     <div v-if="dataStore.prediction.ctrlprediction != null">
       <h2> Control Prediction</h2>
@@ -46,8 +74,8 @@ const predict = async () => {
     <!-- rules control -->
     <div v-if="dataStore.prediction.ctrlrulestrs != null">
       <h2> Control Rules</h2>
-      <div v-for="(rule, index) in dataStore.prediction.ctrlrulestrs" :key="index">
-        <p>{{ rule }}</p>
+      <div v-for="(rule, index) in dataStore.prediction.ctrlrules_cleaned" :key="index">
+        <p>{{ rule.string }}</p>
       </div>
     </div>
 
