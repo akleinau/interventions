@@ -8,15 +8,23 @@ import Prediction from "./components/prediction.vue";
 
 <template>
 
-  <div class="d-flex flex-column w-100">
+  <div class="d-flex flex-column fullwidth">
 
-    <v-card class="w-100">
+    <v-card style="background:#e2efff">
+
+    </v-card>
+
+    <v-card class="mt-3 w-100">
 
       <v-card-title>
-        <h2>Input</h2>
+                <div class="d-flex w-100 justify-space-between align-center">
+          <h2> Smoke Cassation Tool #2 </h2>
+          <img src="./assets/cessation_logo.png" alt="logo" class="logo" style="width:300px"/>
+        </div>
+        <v-divider class="mt-3" thickness="5" />
       </v-card-title>
 
-      <v-card-text>
+      <v-card-text class="w-75 mb-3" style="margin:auto">
 
         <data_loading/>
 
@@ -43,5 +51,9 @@ import Prediction from "./components/prediction.vue";
 </template>
 
 <style scoped>
+
+  .fullwidth {
+    width: 1200px;
+  }
 
 </style>
