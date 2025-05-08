@@ -2,6 +2,9 @@
 
 import Data_loading from "./components/data_loading.vue";
 import Prediction from "./components/prediction.vue";
+import {useDataStore} from "./stores/data_store";
+
+const dataStore = useDataStore()
 
 
 </script>
@@ -31,6 +34,10 @@ import Prediction from "./components/prediction.vue";
       </v-card-text>
 
     </v-card>
+
+    <div>
+        <v-btn class="mb-3 mt-5" @click="dataStore.predict()" > Predict </v-btn>
+    </div>
 
     <v-card class="mt-3 w-100">
 
