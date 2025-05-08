@@ -33,7 +33,7 @@ async function get_input_params() {
 
 <template>
 
-  <v-btn @click="get_input_params">Load</v-btn>
+  <v-btn @click="get_input_params" variant="outlined">Load</v-btn>
 
   <div v-if="input_spec !== null">
     <div v-if="input_spec.params !== null">
@@ -64,7 +64,7 @@ async function get_input_params() {
 
     <!-- interventions -->
     <div v-if="input_spec.interventions !== null">
-      <h2>Parameters</h2>
+      <h2>Options</h2>
       <div v-for="(param, index) in input_spec.interventions" :key="index">
 
         <!-- slider -->

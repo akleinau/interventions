@@ -8,11 +8,35 @@ import Prediction from "./components/prediction.vue";
 
 <template>
 
-  <div class="d-flex flex-column">
+  <div class="d-flex flex-column w-100">
 
-    <data_loading/>
+    <v-card class="w-100">
 
-    <prediction/>
+      <v-card-title>
+        <h2>Input</h2>
+      </v-card-title>
+
+      <v-card-text>
+
+        <data_loading/>
+
+      </v-card-text>
+
+    </v-card>
+
+    <v-card class="mt-3 w-100">
+
+      <v-card-title>
+        <h2>Prediction</h2>
+      </v-card-title>
+
+      <v-card-text>
+
+        <prediction/>
+
+      </v-card-text>
+
+    </v-card>
 
   </div>
 

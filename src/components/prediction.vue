@@ -33,7 +33,7 @@ const predict = async () => {
 </script>
 
 <template>
-  <v-btn class="mt-5" @click="predict"> Predict </v-btn>
+  <v-btn class="mt-5" @click="predict" variant="outlined"> Predict </v-btn>
 
   <div v-if="dataStore.prediction != null">
 
