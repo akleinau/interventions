@@ -1,6 +1,7 @@
 <script setup lang="ts">
 
 import {useDataStore} from "../stores/data_store";
+import TwoSidedBar from "../plots/two-sided-bar.vue";
 
 const dataStore = useDataStore()
 
@@ -27,11 +28,11 @@ const predict = async () => {
 
   response.ctrlrules_cleaned = response.ctrlrls.map((rule: any) => {
     return { "terms": rule[0].map((a: any) => a[0]), "weight": rule[1].toFixed(2),
-      "string": rule[0].map((a: any) => a[0]).join(" & ") + " : " + rule[1].toFixed(2)}
+      "string": rule[0].map((a: any) => a[0]).join(" & ")}
   })
 
   response.testrules_cleaned = response.testrls.map((rule: any) => {
-    let string = rule[0].map((a: any) => a[0]).join(" & ") + " : " + rule[1].toFixed(2)
+    let string = rule[0].map((a: any) => a[0]).join(" & ")
 
     // check if string is already in control
     let is_in_control_rules = response.ctrlrules_cleaned.some((r: any) => r.string === string)
@@ -47,37 +48,23 @@ const predict = async () => {
 </script>
 
 <template>
-  <v-btn class="mt-5" @click="predict" variant="outlined"> Predict </v-btn>
+  <v-btn class="mb-5" @click="predict" variant="outlined"> Predict </v-btn>
 
-  <div v-if="dataStore.prediction != null">
+  <div v-if="dataStore.prediction">
 
     <!-- prediction test -->
     <div v-if="dataStore.prediction.testprediction != null">
-      <h2> Test Prediction</h2>
-      <p>{{ dataStore.prediction.testprediction }}</p>
-    </div>
-
-    <!-- rules test -->
-    <div v-if="dataStore.prediction.testrls != null">
-      <h2> Test Rules</h2>
-      <div v-for="(rule, index) in dataStore.prediction.testrules_cleaned.filter((a:any) => a.new)" :key="index">
-        <p>{{ rule.string }}</p>
-      </div>
+      <h2 class="mb-2"> Test Prediction: {{ dataStore.prediction.testprediction.toFixed(2) }}</h2>
+      <two-sided-bar :isTestGroup="true"  v-if="dataStore.prediction.testrls != null" />
     </div>
 
     <!-- prediction control -->
-    <div v-if="dataStore.prediction.ctrlprediction != null">
-      <h2> Control Prediction</h2>
-      <p>{{ dataStore.prediction.ctrlprediction }}</p>
+    <div v-if="dataStore.prediction.ctrlprediction != null" class="mt-5">
+      <h2 class="mb-2"> Control Prediction: {{ dataStore.prediction.ctrlprediction.toFixed(2) }}</h2>
+      <two-sided-bar :isTestGroup="false" v-if="dataStore.prediction.ctrlrulestrs != null" />
     </div>
 
-    <!-- rules control -->
-    <div v-if="dataStore.prediction.ctrlrulestrs != null">
-      <h2> Control Rules</h2>
-      <div v-for="(rule, index) in dataStore.prediction.ctrlrules_cleaned" :key="index">
-        <p>{{ rule.string }}</p>
-      </div>
-    </div>
+
 
 
   </div>
