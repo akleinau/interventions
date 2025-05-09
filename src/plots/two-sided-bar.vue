@@ -78,7 +78,7 @@ const update_vis = () => {
       .attr("text-anchor", d => x(d.weight) > x(0) ? "start" : "end")
       .style("fill", "#888888")
       .style("font-size", "11px")
-      .text((d: any) => d.weight)
+      .text((d: any) => d.weight < 0 ? d.weight : "+" + d.weight)
 
   // add vertical middle line
   svg.append("line")

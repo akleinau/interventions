@@ -15,15 +15,19 @@ const dataStore = useDataStore()
 
   <div v-if="dataStore.prediction">
 
+    <div v-if="dataStore.prediction.base != null" class="mb-3">
+      (Feature influences shown compared to average prediction of {{ dataStore.prediction.base.toFixed(2) }} %)
+    </div>
+
     <!-- prediction test -->
-    <div v-if="dataStore.prediction.testprediction != null">
-      <h2 class="mb-2"> Test Prediction: {{ dataStore.prediction.testprediction.toFixed(2) }}</h2>
+    <div v-if="dataStore.prediction.testfit != null">
+      <h2 class="mb-2"> Test Prediction: {{ dataStore.prediction.testfit.toFixed(2) }} % </h2>
       <two-sided-bar :isTestGroup="true"  v-if="dataStore.prediction.testrls != null" />
     </div>
 
     <!-- prediction control -->
-    <div v-if="dataStore.prediction.ctrlprediction != null" class="mt-5">
-      <h2 class="mb-2"> Control Prediction: {{ dataStore.prediction.ctrlprediction.toFixed(2) }}</h2>
+    <div v-if="dataStore.prediction.ctrlfit != null" class="mt-5">
+      <h2 class="mb-2"> Control Prediction: {{ dataStore.prediction.ctrlfit.toFixed(2) }} % </h2>
       <two-sided-bar :isTestGroup="false" v-if="dataStore.prediction.ctrlrulestrs != null" />
     </div>
 

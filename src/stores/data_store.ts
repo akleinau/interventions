@@ -26,13 +26,11 @@ export const useDataStore = defineStore({
             let response = await gResponse.json();
 
             // add numerical predictions
-            response.ctrlprediction = response.ctrlrls.reduce((acc: number, curr: any) => {
+            let ctrlprediction = response.ctrlrls.reduce((acc: number, curr: any) => {
                 return acc + curr[1]
             }, 0)
 
-            response.testprediction = response.testrls.reduce((acc: number, curr: any) => {
-                return acc + curr[1]
-            }, 0)
+            response.base = response.ctrlfit - ctrlprediction
 
             response.ctrlrules_cleaned = response.ctrlrls.map((rule: any) => {
                 return {
