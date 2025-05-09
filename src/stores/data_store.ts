@@ -39,6 +39,11 @@ export const useDataStore = defineStore({
                 }
             })
 
+            // sort rules by weight
+            response.ctrlrules_cleaned.sort((a: any, b: any) => {
+                return Math.abs(b.weight) - Math.abs(a.weight)
+            })
+
             response.testrules_cleaned = response.testrls.map((rule: any) => {
                 let string = rule[0].map((a: any) => a[0]).join(" & ")
 
@@ -48,6 +53,11 @@ export const useDataStore = defineStore({
                     "terms": rule[0].map((a: any) => a[0]), "weight": rule[1].toFixed(2), "new": !is_in_control_rules,
                     "string": string
                 }
+            })
+
+            // sort rules by weight
+            response.testrules_cleaned.sort((a: any, b: any) => {
+                return Math.abs(b.weight) - Math.abs(a.weight)
             })
 
             // get max weight of both rule sets

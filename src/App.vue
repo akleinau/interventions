@@ -27,7 +27,7 @@ const dataStore = useDataStore()
           </div>
         </div>
 
-      <v-card-title>
+      <v-card-title class=" ml-5 mr-5">
         <div class="d-flex w-100 justify-space-between align-center">
           <h2> Smoke Cessation Prediction</h2>
           <img src="./assets/cessation_logo.png" alt="logo" class="logo" style="width:300px"/>

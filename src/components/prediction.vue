@@ -22,13 +22,13 @@ const dataStore = useDataStore()
     <!-- prediction test -->
     <div v-if="dataStore.prediction.testfit != null">
       <h2 class="mb-2"> Test Prediction: {{ dataStore.prediction.testfit.toFixed(2) }} % </h2>
-      <two-sided-bar :isTestGroup="true"  v-if="dataStore.prediction.testrls != null" />
+      <two-sided-bar :isTestGroup="true" />
     </div>
 
     <!-- prediction control -->
     <div v-if="dataStore.prediction.ctrlfit != null" class="mt-5">
       <h2 class="mb-2"> Control Prediction: {{ dataStore.prediction.ctrlfit.toFixed(2) }} % </h2>
-      <two-sided-bar :isTestGroup="false" v-if="dataStore.prediction.ctrlrulestrs != null" />
+      <two-sided-bar :isTestGroup="false" />
     </div>
 
 
