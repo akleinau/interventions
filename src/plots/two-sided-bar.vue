@@ -24,7 +24,8 @@ const update_vis = () => {
   const rules = props.isTestGroup ? dataStore.prediction.testrules_cleaned.filter((a:any) => a.new) : dataStore.prediction.ctrlrules_cleaned
 
   const svg_width = 1100
-  const svg_height = 20 + 20 * rules.length
+  const padding_top = 0
+  const svg_height = padding_top + 20 * rules.length
 
   let svg = d3.create("svg")
       .attr("width", svg_width + 20)
@@ -32,13 +33,13 @@ const update_vis = () => {
       .attr("viewBox", [0, 0, svg_width, svg_height])
 
   // add a two-sided bar chart with one bar for each rule
-  const max_weight = 10
+  const max_weight = dataStore.prediction.max_weight * 3
   const x = d3.scaleLinear()
       .domain([-max_weight, max_weight])
       .range([0, svg_width])
   const y = d3.scaleBand()
       .domain(rules.map((d: any) => d.string))
-      .range([0, svg_height])
+      .range([padding_top, svg_height])
       .padding(0.1)
 
   // add the bars

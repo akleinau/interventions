@@ -40,86 +40,116 @@ async function get_input_params() {
   <div v-if="input_spec !== null">
     <div v-if="input_spec.params !== null" class="mt-5">
       <h2>Parameters</h2>
-      <div v-for="(param, index) in input_spec.params" :key="index">
+      <v-container>
+        <v-row v-for="(param, index) in input_spec.params" :key="index">
 
-        <!-- slider -->
-        <div v-if="param.type == 'slider'" class="d-flex">
-          {{ param.label }}: {{ dataStore.input_params[param.id] }}
-          <v-slider v-model="dataStore.input_params[param.id]" :min="param.min" :max="param.max" :step="param.step"
-                    density="compact" hide-details single-line style="width:500px" color="grey-darken-1"/>
-        </div>
+          <v-col cols="3">
+            <div class="text-align-last align-end w-100 mt-2" style="text-align:right"> {{ param.label }}</div>
+          </v-col>
 
-        <!-- checkbox -->
-        <div v-else-if="param.type == 'checkbox'">
-          <v-checkbox v-model="dataStore.input_params[param.id]" :label="param.label"
-                      density="compact" hide-details single-line/>
-        </div>
+          <v-col cols="9">
 
-        <!-- select -->
-        <div v-else-if="param.type == 'select'" class="d-flex">
-          <div class="mt-2 mr-2"> {{ param.label }} </div>
-          <v-select v-model="dataStore.input_params[param.id]" :items="param.choices" :label="param.label"
-                    density="compact" hide-details single-line class="mb-2" variant="outlined"/>
-        </div>
+            <!-- slider -->
+            <div v-if="param.type == 'slider'" class="w-100">
 
-        <!-- multiselect -->
-        <div v-else-if="param.type == 'multiselect'" class="d-flex">
-          <div class="mt-2 mr-2"> {{ param.label }} </div>
-          <v-select v-model="dataStore.input_params[param.id]" :items="param.choices" :label="param.label"
-                    density="compact" hide-details single-line multiple class="mb-2" variant="underlined">
-            <template v-slot:selection="{ item, index }">
-              <v-chip v-if="index < 5" :text="item.title" class="mb-1"></v-chip>
-              <span v-if="index === 5" class="text-grey text-caption align-self-center">
-                (+{{ dataStore.input_params[param.id].length - 5 }} others)
-              </span>
-            </template>
-          </v-select>
-        </div>
+              <v-slider v-model="dataStore.input_params[param.id]" :min="param.min" :max="param.max" :step="param.step"
+                        thumb-label thumb-size="20"
+                        density="compact" hide-details single-line color="grey-darken-1">
+                <template v-slot:append>
+                  <v-text-field v-model="dataStore.input_params[param.id]" density="compact" variant="plain"
+                                style="width: 50px" type="number" hide-details single-line class="mb-2"
+                  ></v-text-field>
+                </template>
+              </v-slider>
+            </div>
 
-      </div>
+            <!-- checkbox -->
+            <div v-else-if="param.type == 'checkbox'">
+              <v-checkbox v-model="dataStore.input_params[param.id]"
+                          density="compact" hide-details single-line/>
+            </div>
+
+            <!-- select -->
+            <div v-else-if="param.type == 'select'" class="d-flex mr-5 mt-2">
+              <v-select v-model="dataStore.input_params[param.id]" :items="param.choices" :label="param.label"
+                        density="compact" hide-details single-line class="mb-2" variant="outlined"/>
+            </div>
+
+            <!-- multiselect -->
+            <div v-else-if="param.type == 'multiselect'" class="d-flex mr-5">
+              <v-select v-model="dataStore.input_params[param.id]" :items="param.choices" :label="param.label"
+                        density="compact" hide-details single-line multiple class="mb-2" variant="underlined">
+                <template v-slot:selection="{ item, index }">
+                  <v-chip v-if="index < 5" :text="item.title" class="mb-1"></v-chip>
+                  <span v-if="index === 5" class="text-grey text-caption align-self-center">
+                  (+{{ dataStore.input_params[param.id].length - 5 }} others)
+                </span>
+                </template>
+              </v-select>
+            </div>
+
+          </v-col>
+        </v-row>
+      </v-container>
+
+
     </div>
 
     <!-- interventions -->
     <div v-if="input_spec.interventions !== null" class="mt-5">
       <h2>Test Parameters</h2>
-      <div v-for="(param, index) in input_spec.interventions" :key="index">
+      <v-container>
+        <v-row v-for="(param, index) in input_spec.interventions" :key="index">
 
-             <!-- slider -->
-        <div v-if="param.type == 'slider'" class="d-flex">
-          {{ param.label }}: {{ dataStore.input_params[param.id] }}
-          <v-slider v-model="dataStore.input_params[param.id]" :min="param.min" :max="param.max" :step="param.step"
-                    density="compact" hide-details single-line style="width:800px" color="grey-darken-1"/>
-        </div>
+          <v-col cols="3">
+            <div class="text-align-last align-end w-100 mt-2" style="text-align:right"> {{ param.label }}</div>
+          </v-col>
 
-        <!-- checkbox -->
-        <div v-else-if="param.type == 'checkbox'">
-          <v-checkbox v-model="dataStore.input_params[param.id]" :label="param.label"
-                      density="compact" hide-details single-line/>
-        </div>
+          <v-col cols="9">
 
-        <!-- select -->
-        <div v-else-if="param.type == 'select'" class="d-flex">
-          <div class="mt-2 mr-2"> {{ param.label }} </div>
-          <v-select v-model="dataStore.input_params[param.id]" :items="param.choices" :label="param.label"
-                    density="compact" hide-details single-line class="mb-2" variant="outlined"/>
-        </div>
+            <!-- slider -->
+            <div v-if="param.type == 'slider'" class="w-100">
 
-        <!-- multiselect -->
-        <div v-else-if="param.type == 'multiselect'" class="d-flex">
-          <div class="mt-2 mr-2"> {{ param.label }} </div>
-          <v-select v-model="dataStore.input_params[param.id]" :items="param.choices" :label="param.label"
-                    density="compact" hide-details single-line multiple class="mb-2" variant="underlined">
-            <template v-slot:selection="{ item, index }">
-              <v-chip v-if="index < 5" :text="item.title" class="mb-1"></v-chip>
-              <span v-if="index === 5" class="text-grey text-caption align-self-center">
-                (+{{ dataStore.input_params[param.id].length - 5 }} others)
-              </span>
-            </template>
-          </v-select>
+              <v-slider v-model="dataStore.input_params[param.id]" :min="param.min" :max="param.max" :step="param.step"
+                        thumb-label thumb-size="20"
+                        density="compact" hide-details single-line color="grey-darken-1">
+                <template v-slot:append>
+                  <v-text-field v-model="dataStore.input_params[param.id]" density="compact" variant="plain"
+                                style="width: 50px" type="number" hide-details single-line class="mb-2"
+                  ></v-text-field>
+                </template>
+              </v-slider>
+            </div>
 
-        </div>
+            <!-- checkbox -->
+            <div v-else-if="param.type == 'checkbox'">
+              <v-checkbox v-model="dataStore.input_params[param.id]"
+                          density="compact" hide-details single-line/>
+            </div>
 
-      </div>
+            <!-- select -->
+            <div v-else-if="param.type == 'select'" class="d-flex mr-5 mt-2">
+              <v-select v-model="dataStore.input_params[param.id]" :items="param.choices" :label="param.label"
+                        density="compact" hide-details single-line class="mb-2" variant="outlined"/>
+            </div>
+
+            <!-- multiselect -->
+            <div v-else-if="param.type == 'multiselect'" class="d-flex mr-5">
+              <v-select v-model="dataStore.input_params[param.id]" :items="param.choices" :label="param.label"
+                        density="compact" hide-details single-line multiple class="mb-2" variant="underlined">
+                <template v-slot:selection="{ item, index }">
+                  <v-chip v-if="index < 5" :text="item.title" class="mb-1"></v-chip>
+                  <span v-if="index === 5" class="text-grey text-caption align-self-center">
+                  (+{{ dataStore.input_params[param.id].length - 5 }} others)
+                </span>
+                </template>
+              </v-select>
+            </div>
+
+          </v-col>
+
+        </v-row>
+      </v-container>
     </div>
 
 
@@ -128,5 +158,11 @@ async function get_input_params() {
 </template>
 
 <style scoped>
+
+.v-col {
+  padding: 0;
+  padding-right: 10px;
+  font-size: 16px;
+}
 
 </style>

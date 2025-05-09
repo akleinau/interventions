@@ -52,6 +52,10 @@ export const useDataStore = defineStore({
                 }
             })
 
+            // get max weight of both rule sets
+            response.max_weight = Math.max(...response.ctrlrules_cleaned.map((rule: any) => Math.abs(rule.weight)),
+                                                ...response.testrules_cleaned.map((rule: any) => Math.abs(rule.weight)))
+
             console.log(response)
             this.prediction = response
         }

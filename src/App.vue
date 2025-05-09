@@ -19,9 +19,17 @@ const dataStore = useDataStore()
 
     <v-card class="mt-3 w-100">
 
+       <div class="d-flex mb-3 pa-2 justify-end align-center bg-grey-lighten-3">
+          or add your own model:
+          <div style="width:400px">
+            <v-text-field label="API Address" class="ml-2" style="background: #f8f8f8"
+                         single-line density="compact" variant="outlined" hide-details  />
+          </div>
+        </div>
+
       <v-card-title>
-                <div class="d-flex w-100 justify-space-between align-center">
-          <h2> Smoke Cassation Tool #2 </h2>
+        <div class="d-flex w-100 justify-space-between align-center">
+          <h2> Smoke Cessation Prediction</h2>
           <img src="./assets/cessation_logo.png" alt="logo" class="logo" style="width:300px"/>
         </div>
         <v-divider class="mt-3" thickness="5" />
@@ -39,7 +47,7 @@ const dataStore = useDataStore()
         <v-btn class="mb-3 mt-5" @click="dataStore.predict()" > Predict </v-btn>
     </div>
 
-    <v-card class="mt-3 w-100">
+    <v-card class="mt-3 w-100"  v-if="Object.keys(dataStore.prediction).length !== 0">
 
       <v-card-title>
         <h2>Prediction</h2>
