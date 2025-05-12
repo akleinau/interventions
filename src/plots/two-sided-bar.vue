@@ -31,10 +31,10 @@ const update_vis = () => {
 
   let rules = props.isTestGroup ? dataStore.prediction.testrules_cleaned.filter((a:any) => a.new) : dataStore.prediction.ctrlrules_cleaned
 
-  isExtendable.value = rules.length > 5
-  isExtended.value = isExtendable.value && isExtended.value
-
   const COMPACT_RULE_NR = 10
+
+  isExtendable.value = rules.length > COMPACT_RULE_NR
+  isExtended.value = isExtendable.value && isExtended.value
 
   // only select up to 5 most important rules
   if ( isExtendable.value && !isExtended.value) {
