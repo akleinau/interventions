@@ -69,7 +69,7 @@ const update_vis = () => {
       .attr("y", y)
       .attr("width", Math.abs(Math.abs(x(d.weight)) - x(0)))
       .attr("height", bar_height)
-      .attr("fill", d.weight > 0 ? "#da5e5e" : "#647fd0")
+      .attr("fill", d.weight > 0 ? "#647fd0": "#da5e5e")
 
   // add the text
   // first split the string when it is too long

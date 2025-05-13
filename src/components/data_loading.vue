@@ -137,7 +137,7 @@ let expln = dataStore.explanation
 
     <!-- interventions -->
     <div v-if="input_spec.interventions !== null" class="mt-5">
-      <h2>Test Parameters</h2>
+      <h2>Interventions</h2>
       <v-container>
         <v-row v-for="(param, index) in input_spec.interventions" :key="index">
 
