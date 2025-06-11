@@ -19,12 +19,17 @@ const dataStore = useDataStore()
 
     <v-card class="mt-3 w-100">
 
-       <div class="d-flex mb-3 pa-2 justify-end align-center bg-grey-lighten-3">
-          or add your own model:
-          <div style="width:400px">
-            <v-text-field label="API Address" class="ml-2" style="background: #f8f8f8"
-                         single-line density="compact" variant="outlined" hide-details  />
-          </div>
+       <div class="d-flex mb-3 pa-2 justify-space-between align-center bg-grey-lighten-3">
+         <div>
+           <v-btn variant="text" class="text-grey-darken-4" href="https://www.humanbehaviourchange.org/contact" >Contact</v-btn>
+         </div>
+         <div v-if="true" class="d-flex justify-end align-center">
+            or add your own model:
+            <div style="width:400px">
+              <v-text-field label="API Address" class="ml-2" style="background: #f8f8f8"
+                           single-line density="compact" variant="outlined" hide-details  />
+            </div>
+         </div>
         </div>
 
       <v-card-title class=" ml-5 mr-5">

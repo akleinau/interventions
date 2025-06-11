@@ -15,7 +15,7 @@ const dataStore = useDataStore()
 
   <div v-if="dataStore.prediction">
 
-    <div v-if="dataStore.prediction.base != null" class="mb-3">
+    <div v-if="dataStore.prediction.base != null && false" class="mb-3">
       (Feature influences shown compared to the models base of {{ dataStore.prediction.base.toFixed(2) }} %)
     </div>
 
