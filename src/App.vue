@@ -11,11 +11,7 @@ const dataStore = useDataStore()
 
 <template>
 
-  <div class="d-flex flex-column fullwidth">
-
-    <v-card style="background:#e2efff">
-
-    </v-card>
+  <div class="d-flex flex-column fullwidth mr-sm-2 ml-sm-2">
 
     <v-card class="mt-3 w-100">
 
@@ -23,7 +19,7 @@ const dataStore = useDataStore()
          <div>
            <v-btn variant="text" class="text-grey-darken-4" href="https://www.humanbehaviourchange.org/contact" >Contact</v-btn>
          </div>
-         <div v-if="true" class="d-flex justify-end align-center">
+         <div v-if="false" class="d-flex justify-end align-center">
             or add your own model:
             <div style="width:400px">
               <v-text-field label="API Address" class="ml-2" style="background: #f8f8f8"
@@ -32,15 +28,15 @@ const dataStore = useDataStore()
          </div>
         </div>
 
-      <v-card-title class=" ml-5 mr-5">
-        <div class="d-flex w-100 justify-space-between align-center">
-          <h2> Smoke Cessation Prediction</h2>
-          <img src="./assets/cessation_logo.png" alt="logo" class="logo" style="width:300px"/>
+      <v-card-title class=" ml-sm-5 mr-sm-5">
+        <div class="d-flex w-100 justify-space-between align-center flex-wrap">
+          <div class="d-flex flex-wrap align-cneter text-wrap"><h2 > Smoke Cessation Prediction</h2></div>
+          <img src="./assets/cessation_logo.png" alt="logo" class="logo ma-auto ma-sm-0" style="width:300px"/>
         </div>
         <v-divider class="mt-3" thickness="5" />
       </v-card-title>
 
-      <v-card-text class="w-75 mb-3" style="margin:auto">
+      <v-card-text class="ml-sm-15 mr-sm-15 mb-3 " style="margin:auto">
 
         <data_loading/>
 
@@ -71,9 +67,5 @@ const dataStore = useDataStore()
 </template>
 
 <style scoped>
-
-  .fullwidth {
-    width: 1200px;
-  }
 
 </style>

@@ -2,6 +2,7 @@
 import * as d3 from "d3";
 import {onMounted, ref, useTemplateRef, watch} from "vue";
 import {useDataStore} from "../stores/data_store";
+import { useDisplay } from 'vuetify'
 
 const dataStore = useDataStore()
 
@@ -25,6 +26,8 @@ watch(() => isExtended.value, () => {
   update_vis()
 }, )
 
+const { xs } = useDisplay()
+
 
 
 const update_vis = () => {
@@ -41,7 +44,7 @@ const update_vis = () => {
     rules = rules.slice(0, COMPACT_RULE_NR)
   }
 
-  const svg_width = 1100
+  const svg_width = xs.value ? 300 : 1100
   const padding_top = 0
   const padding_bottom = 20
   let svg_height = padding_top + 20 * rules.length
@@ -74,7 +77,7 @@ const update_vis = () => {
   // add the text
   // first split the string when it is too long
   const words_string = d.string.split(" ")
-  const split_string_max_length = 70
+  const split_string_max_length = xs.value ? 25 : 70
   let spans = []
   let split_string = ""
   for (let i = 0; i < words_string.length; i++) {
@@ -156,7 +159,7 @@ const update_vis = () => {
 </script>
 
 <template>
-  <div class="justify-center ml-15">
+  <div class="justify-center overflow-x-auto overflow-y-hidden">
     <div ref="container"></div>
     <v-btn icon density="compact" @click="isExtended = !isExtended" variant="outlined" class="ml-2" size="40"
            color="grey" v-if="isExtendable">

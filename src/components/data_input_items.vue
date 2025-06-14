@@ -13,11 +13,11 @@ const props = defineProps(['param'])
 </script>
 
 <template>
-  <v-col cols="3" class="pa-0">
-    <div class="text-align-last align-end w-100 mt-2 pa-0 pr-3" style="text-align:right"> {{ lbl(props.param.label) }}</div>
+  <v-col cols="5" sm="3" class="pa-0">
+    <div class="text-right mt-2 pa-0 pr-3" > {{ lbl(props.param.label) }}</div>
   </v-col>
 
-  <v-col cols="9" class="pa-0">
+  <v-col  class="pa-0 ma-auto ">
 
     <!-- slider -->
     <div v-if="param.type == 'slider'" class="w-100 pa-0">
