@@ -8,7 +8,7 @@ const dataStore = useDataStore()
 
 const container = useTemplateRef('container')
 
-const props = defineProps(['isTestGroup'])
+const props = defineProps(['rules'])
 
 const isExtended = ref(false)
 
@@ -26,13 +26,17 @@ watch(() => isExtended.value, () => {
   update_vis()
 }, )
 
+watch( () => props.rules, () => {
+  update_vis()
+}, )
+
 const { xs } = useDisplay()
 
 
 
 const update_vis = () => {
 
-  let rules = props.isTestGroup ? dataStore.prediction.testrules_cleaned.filter((a:any) => a.new) : dataStore.prediction.ctrlrules_cleaned
+  let rules = props.rules
 
   const COMPACT_RULE_NR = 10
 
@@ -55,7 +59,7 @@ const update_vis = () => {
       .attr("viewBox", [0, 0, svg_width, svg_height])
 
   // add a two-sided bar chart with one bar for each rule
-  const max_weight = dataStore.prediction.max_weight * 3
+  const max_weight = dataStore.max_weight * 3
   const x = d3.scaleLinear()
       .domain([-max_weight, max_weight])
       .range([0, svg_width])

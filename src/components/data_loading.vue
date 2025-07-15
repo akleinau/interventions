@@ -21,6 +21,7 @@ async function get_input_params() {
   input_spec.value = response
 
   dataStore.input_params = {}
+  dataStore.input_interventions = {}
 
   if (input_spec.value == null) {
     return
@@ -31,7 +32,7 @@ async function get_input_params() {
   })
 
   input_spec.value.interventions.forEach((intervention: any) => {
-    dataStore.input_params[intervention.id] = intervention.value
+    dataStore.input_interventions[intervention.id] = intervention.value
   })
 }
 
@@ -52,7 +53,7 @@ async function get_labels() {
       <h2>Parameters</h2>
       <v-container>
         <v-row v-for="(param, index) in input_spec.params" :key="index">
-            <data_input_items :param="param" class="pa-0" />
+            <data_input_items :param="param" :model="dataStore.input_params" class="pa-0" />
         </v-row>
       </v-container>
 
@@ -64,7 +65,7 @@ async function get_labels() {
       <h2>Interventions</h2>
       <v-container>
         <v-row v-for="(param, index) in input_spec.interventions" :key="index">
-          <data_input_items :param="param" class="pa-0" />
+          <data_input_items :param="param" :model="dataStore.input_interventions" class="pa-0" />
         </v-row>
       </v-container>
     </div>
