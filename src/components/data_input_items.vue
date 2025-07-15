@@ -8,7 +8,7 @@ let dataStore = useDataStore()
 let lbl = dataStore.label
 let expln = dataStore.explanation
 
-const props = defineProps(['param'])
+const props = defineProps(['param', 'model'])
 
 </script>
 
@@ -22,11 +22,11 @@ const props = defineProps(['param'])
     <!-- slider -->
     <div v-if="param.type == 'slider'" class="w-100 pa-0">
 
-      <v-slider v-model="dataStore.input_params[param.id]" :min="param.min" :max="param.max" :step="param.step"
+      <v-slider v-model="model[param.id]" :min="param.min" :max="param.max" :step="param.step"
                 thumb-label thumb-size="20" class="pa-0"
                 density="compact" hide-details single-line color="grey-darken-1">
         <template v-slot:append>
-          <v-text-field v-model="dataStore.input_params[param.id]" density="compact" variant="plain"
+          <v-text-field v-model="model[param.id]" density="compact" variant="plain"
                         style="width: 50px" type="number" hide-details single-line class="mb-2"
           ></v-text-field>
         </template>
@@ -35,13 +35,13 @@ const props = defineProps(['param'])
 
     <!-- checkbox -->
     <div v-else-if="param.type == 'checkbox'">
-      <v-checkbox v-model="dataStore.input_params[param.id]"
+      <v-checkbox v-model="model[param.id]"
                   density="compact" hide-details single-line/>
     </div>
 
     <!-- select -->
     <div v-else-if="param.type == 'select'" class="d-flex mr-5 mt-2">
-      <v-select v-model="dataStore.input_params[param.id]" :items="param.choices" :label="param.label"
+      <v-select v-model="model[param.id]" :items="param.choices" :label="param.label"
                 density="compact" hide-details single-line class="mb-2" variant="outlined">
         <template v-slot:item="{ props: itemProps, item }">
           <v-hover v-slot="{ isHovering, props }">
@@ -61,13 +61,13 @@ const props = defineProps(['param'])
 
     <!-- multiselect -->
     <div v-else-if="param.type == 'multiselect'" class="d-flex mr-5 w-100">
-      <v-select v-model="dataStore.input_params[param.id]" :items="param.choices" :label="param.label"
+      <v-select v-model="model[param.id]" :items="param.choices" :label="param.label"
                 active-class="bg-yellow"
                 density="compact" hide-details single-line multiple class="mb-2" variant="underlined">
         <template v-slot:selection="{ item, index }">
           <v-chip v-if="index < 5" :text="lbl(item.value)" class="mb-1"></v-chip>
           <span v-if="index === 5" class="text-grey text-caption align-self-center">
-                  (+{{ dataStore.input_params[props.param.id].length - 5 }} others)
+                  (+{{ model[props.param.id].length - 5 }} others)
                 </span>
         </template>
         <template v-slot:item="{ props: itemProps, item }">
