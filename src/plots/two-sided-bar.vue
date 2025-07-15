@@ -8,7 +8,7 @@ const dataStore = useDataStore()
 
 const container = useTemplateRef('container')
 
-const props = defineProps(['rules'])
+const props = defineProps(['rules', 'tornado'])
 
 const isExtended = ref(false)
 
@@ -38,6 +38,25 @@ const update_vis = () => {
 
   let rules = props.rules
 
+  if (rules == null || rules.length === 0) {
+    d3.select(container.value).selectAll("*").remove()
+    return
+  }
+
+  if (props.tornado ?? true) {
+    rules[0].start_position = dataStore.base_prediction.prediction
+    for (let i = 1; i < rules.length; i++) {
+      // for tornado, add additive weight info
+      rules[i].start_position = rules[i - 1].start_position + +rules[i - 1].weight
+    }
+  }
+  else {
+    // for two-sided bar, add absolute weight info
+    rules.forEach(d => {
+      d.start_position = 0
+    })
+  }
+
   const COMPACT_RULE_NR = 10
 
   isExtendable.value = rules.length > COMPACT_RULE_NR
@@ -61,7 +80,7 @@ const update_vis = () => {
   // add a two-sided bar chart with one bar for each rule
   const max_weight = dataStore.max_weight * 3
   const x = d3.scaleLinear()
-      .domain([-max_weight, max_weight])
+      .domain([-100, 100])
       .range([0, svg_width])
 
   let y = 0
@@ -72,7 +91,7 @@ const update_vis = () => {
 
     // add the bars
     svg.append("rect")
-      .attr("x", x(d.weight) > x(0) ? x(0) : x(d.weight))
+      .attr("x", d.weight >= 0 ? x(d.start_position) : x(d.start_position + +d.weight))
       .attr("y", y)
       .attr("width", Math.abs(Math.abs(x(d.weight)) - x(0)))
       .attr("height", bar_height)
@@ -121,7 +140,17 @@ const update_vis = () => {
       .style("font-size", "11px")
       .text(d.weight < 0 ? d.weight : "+" + d.weight)
 
+    let prev_y = y
     y += bar_height + bar_padding + (spans.length - 1) * 14
+
+    // add line going down to next bar
+    svg.append("line")
+        .attr("x1", x(d.start_position + +d.weight))
+        .attr("y1", prev_y)
+        .attr("x2", x(d.start_position + +d.weight))
+        .attr("y2", y + bar_height)
+        .style("stroke", "#525252")
+        .style("stroke-width", 2)
 
 
   })

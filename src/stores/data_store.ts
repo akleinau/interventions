@@ -90,11 +90,7 @@ export const useDataStore = defineStore({
             this.prediction = response
         },
 
-        async predict() {
-            console.log(this.input_params)
-
-            await this.predict_control()
-            await this.predict_intervention()
+        determine_base_rules() {
 
             // get rules in all rule sets
             let base_rules = [] as any[]
@@ -105,6 +101,7 @@ export const useDataStore = defineStore({
                     rule_strings.push(rule.string)
                 }
             })
+
             this.base_prediction = {rules: base_rules, prediction: this.control_prediction.base}
             console.log("Base rules:", this.base_prediction)
 
@@ -115,11 +112,24 @@ export const useDataStore = defineStore({
             this.prediction.rules.forEach((rule: any) => {
                 rule.new = !rule_strings.includes(rule.string)
             })
+        },
 
+        set_max_weight() {
             // get max weight of both rule sets
             this.max_weight = Math.max(...this.control_prediction.rules.map((rule: any) => Math.abs(rule.weight)),
                                         ...this.base_prediction.rules.map((rule: any) => Math.abs(rule.weight)),
                                                 ...this.prediction.rules.map((rule: any) => Math.abs(rule.weight)))
+        },
+
+        async predict() {
+            console.log(this.input_params)
+
+            await this.predict_control()
+            await this.predict_intervention()
+
+            this.determine_base_rules()
+            this.set_max_weight()
+
         }
     }
 
