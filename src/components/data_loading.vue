@@ -22,6 +22,7 @@ async function get_input_params() {
 
   dataStore.input_params = {}
   dataStore.input_interventions = {}
+  dataStore.input_spec = input_spec.value
 
   if (input_spec.value == null) {
     return

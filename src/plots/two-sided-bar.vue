@@ -187,7 +187,7 @@ const update_vis = () => {
       .attr("y1", 0)
       .attr("x2", x(0))
       .attr("y2", svg_height - padding_bottom)
-      .attr("stroke", "#525252")
+      .attr("stroke", "#bbbbbb")
       .attr("stroke-width", 2)
 
   // if compact, make the line droppel out
