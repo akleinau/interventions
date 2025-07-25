@@ -2,7 +2,7 @@
 import * as d3 from "d3";
 import {onMounted, ref, useTemplateRef, watch} from "vue";
 import {useDataStore} from "../stores/data_store";
-import { useDisplay } from 'vuetify'
+import {useDisplay} from 'vuetify'
 
 const dataStore = useDataStore()
 
@@ -20,18 +20,17 @@ onMounted(() => {
 
 watch(() => dataStore.prediction, () => {
   update_vis()
-},  )
+},)
 
 watch(() => isExtended.value, () => {
   update_vis()
-}, )
+},)
 
-watch( () => props.rules, () => {
+watch(() => props.rules, () => {
   update_vis()
-}, )
+},)
 
-const { xs } = useDisplay()
-
+const {xs} = useDisplay()
 
 
 const update_vis = () => {
@@ -49,8 +48,7 @@ const update_vis = () => {
       // for tornado, add additive weight info
       rules[i].start_position = rules[i - 1].start_position + +rules[i - 1].weight
     }
-  }
-  else {
+  } else {
     // for two-sided bar, add absolute weight info
     rules.forEach(d => {
       d.start_position = 0
@@ -63,7 +61,7 @@ const update_vis = () => {
   isExtended.value = isExtendable.value && isExtended.value
 
   // only select up to 5 most important rules
-  if ( isExtendable.value && !isExtended.value) {
+  if (isExtendable.value && !isExtended.value) {
     rules = rules.slice(0, COMPACT_RULE_NR)
   }
 
@@ -91,54 +89,54 @@ const update_vis = () => {
 
     // add the bars
     svg.append("rect")
-      .attr("x", d.weight >= 0 ? x(d.start_position) : x(d.start_position + +d.weight))
-      .attr("y", y)
-      .attr("width", Math.abs(Math.abs(x(d.weight)) - x(0)))
-      .attr("height", bar_height)
-      .attr("fill", d.weight > 0 ? "#647fd0": "#da5e5e")
+        .attr("x", d.weight >= 0 ? x(d.start_position) : x(d.start_position + +d.weight))
+        .attr("y", y)
+        .attr("width", Math.abs(Math.abs(x(d.weight)) - x(0)))
+        .attr("height", bar_height)
+        .attr("fill", d.weight > 0 ? "#647fd0" : "#da5e5e")
 
-  // add the text
-  // first split the string when it is too long
-  const words_string = d.string.split(" ")
-  const split_string_max_length = xs.value ? 25 : 70
-  let spans = []
-  let split_string = ""
-  for (let i = 0; i < words_string.length; i++) {
-    if (split_string.length + words_string[i].length > split_string_max_length) {
-      spans.push(split_string)
-      split_string = words_string[i] + " "
-    } else {
-      split_string += words_string[i] + " "
+    // add the text
+    // first split the string when it is too long
+    const words_string = d.string.split(" ")
+    const split_string_max_length = xs.value ? 25 : 70
+    let spans = []
+    let split_string = ""
+    for (let i = 0; i < words_string.length; i++) {
+      if (split_string.length + words_string[i].length > split_string_max_length) {
+        spans.push(split_string)
+        split_string = words_string[i] + " "
+      } else {
+        split_string += words_string[i] + " "
+      }
     }
-  }
-  spans.push(split_string)
+    spans.push(split_string)
 
-  let text = svg.append("text")
-      .attr("class","text_rule")
-      .attr("x", x(d.weight) > x(0) ?  x(0) - 5 :  x(0) + 5)
-      .attr("y", y + bar_height/2)
-      .attr("dy", "0.35em")
-      .attr("text-anchor", x(d.weight) > x(0) ? "end" : "start")
-      .style("font-size", "12px")
+    let text = svg.append("text")
+        .attr("class", "text_rule")
+        .attr("x", x(d.weight) > x(0) ? x(0) - 5 : x(0) + 5)
+        .attr("y", y + bar_height / 2)
+        .attr("dy", "0.35em")
+        .attr("text-anchor", x(d.weight) > x(0) ? "end" : "start")
+        .style("font-size", "12px")
 
-  spans.forEach((s, i) => {
-    text.append("tspan")
-        .attr("x", x(d.weight) > x(0) ?  x(0) - 5 :  x(0) + 5)
-        .attr("dy", i === 0 ? "0.35em" : "1.2em")
-        .text(s)
-  })
+    spans.forEach((s, i) => {
+      text.append("tspan")
+          .attr("x", x(d.weight) > x(0) ? x(0) - 5 : x(0) + 5)
+          .attr("dy", i === 0 ? "0.35em" : "1.2em")
+          .text(s)
+    })
 
 
-  // add weight text on other sider of the bar
-  svg.append("text")
-      .attr("class", "text_weight")
-      .attr("x", x(d.weight) > x(0) ?  x(d.weight) + 5 :  x(d.weight) - 5)
-      .attr("y", y + bar_height/2)
-      .attr("dy", "0.35em")
-      .attr("text-anchor", x(d.weight) > x(0) ? "start" : "end")
-      .style("fill", "#888888")
-      .style("font-size", "11px")
-      .text(d.weight < 0 ? d.weight : "+" + d.weight)
+    // add weight text on other sider of the bar
+    svg.append("text")
+        .attr("class", "text_weight")
+        .attr("x", x(d.weight) > x(0) ? x(d.weight) + 5 : x(d.weight) - 5)
+        .attr("y", y + bar_height / 2)
+        .attr("dy", "0.35em")
+        .attr("text-anchor", x(d.weight) > x(0) ? "start" : "end")
+        .style("fill", "#888888")
+        .style("font-size", "11px")
+        .text(d.weight < 0 ? d.weight : "+" + d.weight)
 
     let prev_y = y
     y += bar_height + bar_padding + (spans.length - 1) * 14
