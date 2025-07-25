@@ -87,11 +87,16 @@ const update_vis = () => {
 
   rules.forEach(d => {
 
+    const rect_start = d.weight >= 0 ? x(d.start_position) : x(d.start_position + +d.weight)
+    const rect_width = Math.abs(Math.abs(x(d.weight)) - x(0))
+    const space_left = rect_start
+    const space_right = svg_width - (rect_start + rect_width)
+
     // add the bars
     svg.append("rect")
-        .attr("x", d.weight >= 0 ? x(d.start_position) : x(d.start_position + +d.weight))
+        .attr("x", rect_start)
         .attr("y", y)
-        .attr("width", Math.abs(Math.abs(x(d.weight)) - x(0)))
+        .attr("width", rect_width)
         .attr("height", bar_height)
         .attr("fill", d.weight > 0 ? "#647fd0" : "#da5e5e")
 
@@ -111,29 +116,46 @@ const update_vis = () => {
     }
     spans.push(split_string)
 
+    // determine the x position of the text, depending on if left or right of the bar is more space
+    let x_text = rect_start - 5
+    let text_anchor = "end"
+    if (space_left < space_right) {
+      x_text = rect_start + rect_width + 5
+      text_anchor = "start"
+    }
+
+
     let text = svg.append("text")
         .attr("class", "text_rule")
-        .attr("x", x(d.weight) > x(0) ? x(0) - 5 : x(0) + 5)
+        .attr("x", x_text)
         .attr("y", y + bar_height / 2)
         .attr("dy", "0.35em")
-        .attr("text-anchor", x(d.weight) > x(0) ? "end" : "start")
+        .attr("text-anchor", text_anchor)
         .style("font-size", "12px")
 
     spans.forEach((s, i) => {
       text.append("tspan")
-          .attr("x", x(d.weight) > x(0) ? x(0) - 5 : x(0) + 5)
+          .attr("x", x(d.weight) > x_text? x_text - 10 : x_text -5 )
           .attr("dy", i === 0 ? "0.35em" : "1.2em")
           .text(s)
     })
 
 
     // add weight text on other sider of the bar
+    // if the bar is on the left side, add the weight on the right side and vice versa
+    let weight_x = rect_start + rect_width + 5
+    let weight_anchor = "start"
+    if (space_left < space_right) {
+      weight_x = rect_start - 5
+      weight_anchor = "end"
+    }
+
     svg.append("text")
         .attr("class", "text_weight")
-        .attr("x", x(d.weight) > x(0) ? x(d.weight) + 5 : x(d.weight) - 5)
+        .attr("x", weight_x)
         .attr("y", y + bar_height / 2)
         .attr("dy", "0.35em")
-        .attr("text-anchor", x(d.weight) > x(0) ? "start" : "end")
+        .attr("text-anchor", weight_anchor)
         .style("fill", "#888888")
         .style("font-size", "11px")
         .text(d.weight < 0 ? d.weight : "+" + d.weight)
