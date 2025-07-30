@@ -1,4 +1,5 @@
 import {defineStore} from 'pinia'
+import {type Rule, type Prediction} from "../interfaces.ts"
 
 export const useDataStore = defineStore({
     id: 'data',
@@ -8,11 +9,11 @@ export const useDataStore = defineStore({
         input_params: {} as { [key: string]: any },
         input_interventions: {} as { [key: string]: any },
         input_spec: {} as { [key: string]: any },
-        prediction: {} as { [key: string]: any },
-        control_prediction: {} as { [key: string]: any },
-        base_prediction: {} as { [key: string]: any },
+        prediction: {} as Prediction,
+        control_prediction: {} as Prediction,
+        base_prediction: {} as Prediction,
         base: 0 as number,
-        stored_predictions: [] as { [key: string]: any }[],
+        stored_predictions: [] as Prediction[],
         labels: {} as { [key: string]: { label: string, group: string, featurename: string, explanation: string } },
         max_weight: 0 as number,
     }),
@@ -57,7 +58,7 @@ export const useDataStore = defineStore({
                     "terms": rule[0].map((a: any) => a.trim()), "weight": rule[1].toFixed(2),
                     "string": string
                 }
-            })
+            }) as Rule[]
 
             let prediction = response.rules.reduce((acc: number, curr: any) => {
                 return acc + curr[1]
@@ -70,7 +71,7 @@ export const useDataStore = defineStore({
 
             this.base = response.fit - prediction
 
-            return {prediction: response.fit, rules: rules_cleaned, pure_prediction: prediction, base: response.fit-prediction}
+            return {value: response.fit, rules: rules_cleaned, pure_prediction: prediction}
         },
 
         async predict_control() {
@@ -98,7 +99,7 @@ export const useDataStore = defineStore({
         determine_base_rules() {
 
             // get rules in all rule sets
-            let base_rules = [] as any[]
+            let base_rules = [] as Rule[]
             let rule_strings = [] as string[]
             this.control_prediction.rules.forEach((rule: any) => {
                 if (this.prediction.rules.find((r: any) => r.string === rule.string) !== undefined) {
@@ -110,7 +111,7 @@ export const useDataStore = defineStore({
             let prediction = base_rules.reduce((acc: number, curr: any) => {
                 return acc + +curr.weight
             }, this.base)
-            this.base_prediction = {rules: base_rules, prediction: prediction}
+            this.base_prediction = {rules: base_rules, value: prediction} as Prediction
             console.log("Base rules:", this.base_prediction)
 
             // set for each rule of each rule set, if it is "new" aka not in the base rule set

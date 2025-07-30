@@ -3,6 +3,7 @@ import * as d3 from "d3";
 import {onMounted, ref, useTemplateRef, watch} from "vue";
 import {useDataStore} from "../stores/data_store";
 import {useDisplay} from 'vuetify'
+import {type Rule} from "../interfaces.ts"
 
 const dataStore = useDataStore()
 
@@ -32,15 +33,9 @@ watch(() => props.rules, () => {
 
 const {xs} = useDisplay()
 
-interface rules {
-  string: string;
-  weight: number;
-  start_position?: number;
-}
-
 const update_vis = () => {
 
-  let rules = props.rules as rules[]
+  let rules = props.rules as Rule[]
 
   if (rules == null || rules.length === 0) {
     d3.select(container.value).selectAll("*").remove()
@@ -51,10 +46,10 @@ const update_vis = () => {
 
     // define where to start
     if (props.type == "base") {
-      rules[0].start_position = dataStore.prediction.base
+      rules[0].start_position = dataStore.base
     }
     else {
-      rules[0].start_position = dataStore.base_prediction.prediction
+      rules[0].start_position = dataStore.base_prediction.value
     }
 
     for (let i = 1; i < rules.length; i++) {

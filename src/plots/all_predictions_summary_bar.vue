@@ -34,24 +34,24 @@ const update_vis = () => {
 
   // create a list of all predictions and their corresponding labels
   let predictions = [] as PredictionSummary[]
-  if (dataStore.base_prediction.prediction != null) {
+  if (dataStore.base_prediction.value != null) {
     predictions.push({
       label: "Base Group",
-      value: dataStore.base_prediction.prediction,
+      value: dataStore.base_prediction.value,
       highlight: false
     })
   }
-  if (dataStore.control_prediction.prediction != null) {
+  if (dataStore.control_prediction.value != null) {
     predictions.push({
       label: "Control Prediction",
-      value: dataStore.control_prediction.prediction,
+      value: dataStore.control_prediction.value,
       highlight: false
     })
   }
-  if (dataStore.prediction.prediction != null) {
+  if (dataStore.prediction.value != null) {
     predictions.push({
       label: "Current Prediction",
-      value: dataStore.prediction.prediction ?? 0,
+      value: dataStore.prediction.value ?? 0,
       highlight: true
     })
   }
