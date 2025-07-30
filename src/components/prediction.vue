@@ -36,11 +36,6 @@ const dataStore = useDataStore()
 
     <Intervention_Dialog v-if="dataStore.prediction.value != null" :intervention="dataStore.prediction.intervention" />
 
-    <!-- prediction control -->
-    <div v-if="dataStore.base_prediction.value != null" class="mt-5">
-      <h2 class="mb-2"> (Prediction) Control group percentage abstinent: {{ dataStore.control_prediction.value.toFixed(2) }} % </h2>
-      <two-sided-bar :rules="dataStore.control_prediction.rules.filter((a:any) => a.new)" type="intervention" />
-    </div>
 
     <all_predictions_summary class="mt-5" />
 

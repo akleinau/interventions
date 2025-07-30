@@ -45,7 +45,7 @@ const dataStore = useDataStore()
     </v-card>
 
     <div>
-        <v-btn class="mb-3 mt-5" @click="dataStore.predict()" > Predict </v-btn>
+        <v-btn class="mb-3 mt-5" @click="dataStore.parameter_predict()" > Predict </v-btn>
     </div>
 
     <v-card class="mt-3 w-100"  v-if="Object.keys(dataStore.prediction).length !== 0">
