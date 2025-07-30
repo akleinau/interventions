@@ -22,9 +22,9 @@ const dataStore = useDataStore()
     </div>
 
     <!-- prediction base -->
-    <div v-if="dataStore.base_prediction.value != null" class="mt-5">
-      <h2 class="mb-2"> (Prediction) Base group percentage abstinent: {{ dataStore.base_prediction.value.toFixed(2) }} % </h2>
-      <two-sided-bar :rules="dataStore.base_prediction.rules" type="base" />
+    <div v-if="dataStore.stored_predictions['base'].value != null" class="mt-5">
+      <h2 class="mb-2"> (Prediction) Base group percentage abstinent: {{ dataStore.stored_predictions['base'].value.toFixed(2) }} % </h2>
+      <two-sided-bar :rules="dataStore.stored_predictions['base'].rules" type="base" />
     </div>
 
 

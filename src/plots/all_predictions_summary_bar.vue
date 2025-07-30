@@ -1,10 +1,14 @@
 <script setup lang="ts">
 
 import {useDataStore} from "../stores/data_store";
-import {useTemplateRef, watch} from "vue";
+import {onMounted, useTemplateRef, watch} from "vue";
 import * as d3 from "d3";
 
 const dataStore = useDataStore()
+
+onMounted(() => {
+  update_vis()
+})
 
 watch(() => dataStore.prediction, () => {
   update_vis()
@@ -17,6 +21,7 @@ watch(() => dataStore.stored_predictions, () => {
 const container = useTemplateRef('container')
 
 interface PredictionSummary {
+  name: string;
   label: string;
   value: number;
   highlight: boolean;
@@ -27,6 +32,8 @@ const update_vis = () => {
 
   d3.select(container.value).selectAll("*").remove()
 
+  const padding_top = 20
+
   let svg = d3.create("svg")
       .attr("width", 600)
       .attr("height", 200)
@@ -34,25 +41,14 @@ const update_vis = () => {
 
   // create a list of all predictions and their corresponding labels
   let predictions = [] as PredictionSummary[]
-  if (dataStore.base_prediction.value != null) {
-    predictions.push({
-      label: "Base Group",
-      value: dataStore.base_prediction.value,
-      highlight: false
-    })
-  }
-  if (dataStore.control_prediction.value != null) {
-    predictions.push({
-      label: "Control Prediction",
-      value: dataStore.control_prediction.value,
-      highlight: false
-    })
-  }
-  if (dataStore.prediction.value != null) {
-    predictions.push({
-      label: "Current Prediction",
-      value: dataStore.prediction.value ?? 0,
-      highlight: true
+  if (Object.keys(dataStore.stored_predictions).length > 0) {
+    Object.entries(dataStore.stored_predictions).forEach(([key, pred], _) => {
+      predictions.push({
+        name: key,
+        label: key,
+        value: pred.value,
+        highlight: key === dataStore.prediction.name
+      })
     })
   }
 
@@ -70,6 +66,7 @@ const update_vis = () => {
       .attr("stroke", "#ccc")
       .attr("rx", 10)
       .attr("ry", 10)
+      .attr("transform", "translate(0, " + padding_top + ")")
 
   // add the lines for each prediction
   svg.selectAll("line")
@@ -82,6 +79,13 @@ const update_vis = () => {
       .attr("y2", 50)
       .attr("stroke", d => d.highlight ? "#7ce1ac" : "#000000")
       .attr("stroke-width", 2)
+      .attr("transform", "translate(0, " + padding_top + ")")
+      .on("click", (_, d) => {
+        // when a line is clicked, set the prediction to the value of the line
+        if (d.name !== null) {
+          dataStore.set_prediction(d.name)
+        }
+      })
 
   // add the labels for each prediction as text below the lines, rotatet at 45 degrees
   svg.selectAll("text")
@@ -94,12 +98,12 @@ const update_vis = () => {
       .text(d => d.label)
       .style("font-size", "12px")
       .style("fill", "#333")
-      .attr("transform", d => "rotate(-45, " + xScale(d.value) + ", 60)")
+      .attr("transform", d => "rotate(-45, " + (xScale(d.value) + padding_top) + ", 80)")
 
   // add the axis
   svg.append("g")
-      .attr("transform", "translate(0, 50)")
-      .call(d3.axisBottom(xScale).ticks(10))
+      .attr("transform", "translate(0, "+ padding_top + ")")
+      .call(d3.axisTop(xScale).ticks(10))
       .selectAll("text")
       .style("font-size", "12px")
       .style("fill", "#888888")

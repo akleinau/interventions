@@ -49,7 +49,7 @@ const update_vis = () => {
       rules[0].start_position = dataStore.base
     }
     else {
-      rules[0].start_position = dataStore.base_prediction.value
+      rules[0].start_position = dataStore.stored_predictions['base'].value
     }
 
     for (let i = 1; i < rules.length; i++) {

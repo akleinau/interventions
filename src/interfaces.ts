@@ -6,6 +6,7 @@ export interface Rule {
 }
 
 export interface Prediction {
+    name: string;
     value: number;
     rules: Rule[];
 }

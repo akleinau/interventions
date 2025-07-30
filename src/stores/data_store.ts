@@ -10,11 +10,9 @@ export const useDataStore = defineStore({
         input_interventions: {} as { [key: string]: any },
         input_spec: {} as { [key: string]: any },
         prediction: {} as Prediction,
-        control_prediction: {} as Prediction,
-        base_prediction: {} as Prediction,
         base_rule_strings: [] as string[],
         base: 0 as number,
-        stored_predictions: [] as Prediction[],
+        stored_predictions: {} as { [key: string]: Prediction },
         labels: {} as { [key: string]: { label: string, group: string, featurename: string, explanation: string } },
         max_weight: 0 as number,
     }),
@@ -75,9 +73,10 @@ export const useDataStore = defineStore({
         async predict_control() {
 
             let response = await this.predict_group(this.input_params)
+            response.name = "control"
             console.log(response)
 
-            this.control_prediction = response
+            this.stored_predictions["control"] = response
         },
 
         async predict_random_intervention() {
@@ -105,11 +104,14 @@ export const useDataStore = defineStore({
 
             let response = await this.predict_group(combined_input)
 
+            response.name = "current"
+
             this.set_if_rules_are_new(response)
 
             console.log("Intervention prediction response:", response)
 
-            this.prediction = response
+            this.stored_predictions["current"] = response
+            this.prediction = this.stored_predictions["current"]
         },
 
         async determine_base_rules() {
@@ -117,15 +119,15 @@ export const useDataStore = defineStore({
             let random_intervention =  await this.predict_random_intervention()
 
             // determine base value
-            let pure_prediction = this.control_prediction.rules.reduce((acc: number, curr: any) => {
+            let pure_prediction = this.stored_predictions["control"].rules.reduce((acc: number, curr: any) => {
                 return acc + +curr.weight
             }, 0)
-            this.base = this.control_prediction.value - pure_prediction
+            this.base = this.stored_predictions["control"].value - pure_prediction
 
             // get rules in all rule sets
             let base_rules = [] as Rule[]
             this.base_rule_strings = [] as string[]
-            this.control_prediction.rules.forEach((rule: any) => {
+            this.stored_predictions["control"].rules.forEach((rule: any) => {
                 if (random_intervention.rules.find((r: any) => r.string === rule.string) !== undefined) {
                     base_rules.push(rule)
                     this.base_rule_strings.push(rule.string)
@@ -135,9 +137,9 @@ export const useDataStore = defineStore({
             let prediction = base_rules.reduce((acc: number, curr: any) => {
                 return acc + +curr.weight
             }, this.base)
-            this.base_prediction = {rules: base_rules, value: prediction} as Prediction
+            this.stored_predictions["base"] = {rules: base_rules, value: prediction, name: "base"} as Prediction
 
-            this.set_if_rules_are_new(this.control_prediction)
+            this.set_if_rules_are_new(this.stored_predictions["control"])
 
         },
 
@@ -150,8 +152,8 @@ export const useDataStore = defineStore({
 
         set_max_weight() {
             // get max weight of both rule sets
-            this.max_weight = Math.max(...this.control_prediction.rules.map((rule: any) => Math.abs(rule.weight)),
-                                        ...this.base_prediction.rules.map((rule: any) => Math.abs(rule.weight)),
+            this.max_weight = Math.max(...this.stored_predictions["control"].rules.map((rule: any) => Math.abs(rule.weight)),
+                                        ...this.stored_predictions["base"].rules.map((rule: any) => Math.abs(rule.weight)),
                                                 ...this.prediction.rules.map((rule: any) => Math.abs(rule.weight)))
         },
 
@@ -162,7 +164,7 @@ export const useDataStore = defineStore({
 
             await this.determine_base_rules()
 
-            this.prediction = this.control_prediction
+            this.prediction = this.stored_predictions["control"]
             this.set_max_weight()
         },
 
@@ -173,6 +175,22 @@ export const useDataStore = defineStore({
 
             this.set_max_weight()
 
+        },
+
+        set_prediction(name: string) {
+            if (name == "control") {
+                this.stored_predictions["current"] = this.prediction
+                this.prediction = this.stored_predictions["control"]
+            }
+            else if (name == "current") {
+                this.prediction = this.stored_predictions["current"]
+            }
+            else if (name.slice(0,6) == "stored"  && Object.keys(this.stored_predictions).length > 0) {
+                // get the prediction from the stored predictions
+            }
+            else {
+                console.error("Unknown prediction name:", name)
+            }
         }
     }
 
