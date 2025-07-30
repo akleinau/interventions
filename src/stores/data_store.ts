@@ -11,6 +11,7 @@ export const useDataStore = defineStore({
         prediction: {} as { [key: string]: any },
         control_prediction: {} as { [key: string]: any },
         base_prediction: {} as { [key: string]: any },
+        base: 0 as number,
         stored_predictions: [] as { [key: string]: any }[],
         labels: {} as { [key: string]: { label: string, group: string, featurename: string, explanation: string } },
         max_weight: 0 as number,
@@ -67,6 +68,8 @@ export const useDataStore = defineStore({
                 return Math.abs(b.weight) - Math.abs(a.weight)
             })
 
+            this.base = response.fit - prediction
+
             return {prediction: response.fit, rules: rules_cleaned, pure_prediction: prediction, base: response.fit-prediction}
         },
 
@@ -104,7 +107,10 @@ export const useDataStore = defineStore({
                 }
             })
 
-            this.base_prediction = {rules: base_rules, prediction: this.control_prediction.base}
+            let prediction = base_rules.reduce((acc: number, curr: any) => {
+                return acc + +curr.weight
+            }, this.base)
+            this.base_prediction = {rules: base_rules, prediction: prediction}
             console.log("Base rules:", this.base_prediction)
 
             // set for each rule of each rule set, if it is "new" aka not in the base rule set

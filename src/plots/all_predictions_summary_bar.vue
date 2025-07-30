@@ -96,6 +96,14 @@ const update_vis = () => {
       .style("fill", "#333")
       .attr("transform", d => "rotate(-45, " + xScale(d.value) + ", 60)")
 
+  // add the axis
+  svg.append("g")
+      .attr("transform", "translate(0, 50)")
+      .call(d3.axisBottom(xScale).ticks(10))
+      .selectAll("text")
+      .style("font-size", "12px")
+      .style("fill", "#888888")
+
 
 
 

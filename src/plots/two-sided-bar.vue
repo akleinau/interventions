@@ -8,7 +8,7 @@ const dataStore = useDataStore()
 
 const container = useTemplateRef('container')
 
-const props = defineProps(['rules', 'tornado'])
+const props = defineProps(['rules', 'tornado', 'type'])
 
 const isExtended = ref(false)
 
@@ -32,10 +32,15 @@ watch(() => props.rules, () => {
 
 const {xs} = useDisplay()
 
+interface rules {
+  string: string;
+  weight: number;
+  start_position?: number;
+}
 
 const update_vis = () => {
 
-  let rules = props.rules
+  let rules = props.rules as rules[]
 
   if (rules == null || rules.length === 0) {
     d3.select(container.value).selectAll("*").remove()
@@ -43,7 +48,15 @@ const update_vis = () => {
   }
 
   if (props.tornado ?? true) {
-    rules[0].start_position = dataStore.base_prediction.prediction
+
+    // define where to start
+    if (props.type == "base") {
+      rules[0].start_position = dataStore.prediction.base
+    }
+    else {
+      rules[0].start_position = dataStore.base_prediction.prediction
+    }
+
     for (let i = 1; i < rules.length; i++) {
       // for tornado, add additive weight info
       rules[i].start_position = rules[i - 1].start_position + +rules[i - 1].weight
@@ -62,11 +75,26 @@ const update_vis = () => {
 
   // only select up to 5 most important rules
   if (isExtendable.value && !isExtended.value) {
+
+    // add a rule at the end that bundles all hidden rules and shows their combined influence
+    let hidden_rules = rules.slice(COMPACT_RULE_NR, rules.length)
     rules = rules.slice(0, COMPACT_RULE_NR)
+
+    if (hidden_rules.length > 0) {
+      const hidden_weight = hidden_rules.reduce((acc, rule) => acc + +rule.weight, 0)
+      const hidden_string = "other"
+      rules.push({
+        string: hidden_string,
+        weight: hidden_weight.toFixed(2),
+        start_position: rules[rules.length - 1].start_position + +rules[rules.length - 1].weight
+      })
+    }
+
+
   }
 
   const svg_width = xs.value ? 300 : 1100
-  const padding_top = 0
+  const padding_top = 30
   const padding_bottom = 20
   let svg_height = padding_top + 20 * rules.length
 
@@ -78,12 +106,20 @@ const update_vis = () => {
   // add a two-sided bar chart with one bar for each rule
   const max_weight = dataStore.max_weight * 3
   const x = d3.scaleLinear()
-      .domain([-100, 100])
+      .domain([0, 100])
       .range([0, svg_width])
 
-  let y = 0
+  let y = padding_top
   const bar_height = 18
   const bar_padding = 5
+
+  // add x axis on top
+  svg.append("g")
+      .attr("transform", `translate(0, ${padding_top})`)
+      .call(d3.axisTop(x).ticks(20))
+      .selectAll("text")
+      .style("font-size", "12px")
+      .style("fill", "#888888")
 
   rules.forEach(d => {
 
@@ -120,7 +156,7 @@ const update_vis = () => {
     let x_text = rect_start - 5
     let text_anchor = "end"
     if (space_left < space_right) {
-      x_text = rect_start + rect_width + 5
+      x_text = rect_start + rect_width + 10
       text_anchor = "start"
     }
 
@@ -179,29 +215,6 @@ const update_vis = () => {
   svg_height = y + padding_top + padding_bottom
   svg.attr("height", svg_height)
   svg.attr("viewBox", [0, 0, svg_width, svg_height])
-
-
-  // add vertical middle line
-  svg.append("line")
-      .attr("x1", x(0))
-      .attr("y1", 0)
-      .attr("x2", x(0))
-      .attr("y2", svg_height - padding_bottom)
-      .attr("stroke", "#bbbbbb")
-      .attr("stroke-width", 2)
-
-  // if compact, make the line droppel out
-  if (isExtendable.value && !isExtended.value) {
-    svg.append("line")
-        .attr("x1", x(0))
-        .attr("y1", svg_height - padding_bottom)
-        .attr("x2", x(0))
-        .attr("y2", svg_height)
-        .attr("stroke", "#525252")
-        .attr("stroke-width", 2)
-        .style("opacity", 0.7)
-        .style("stroke-dasharray", "2, 2")
-  }
 
 
   d3.select(container.value).selectAll("*").remove()
