@@ -61,17 +61,6 @@ async function get_labels() {
 
     </div>
 
-    <!-- interventions -->
-    <div v-if="input_spec.interventions !== null" class="mt-5">
-      <h2>Interventions</h2>
-      <v-container>
-        <v-row v-for="(param, index) in input_spec.interventions" :key="index">
-          <data_input_items :param="param" :model="dataStore.input_interventions" class="pa-0" />
-        </v-row>
-      </v-container>
-    </div>
-
-
   </div>
 
 </template>

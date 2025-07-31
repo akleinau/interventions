@@ -15,6 +15,8 @@ const isExtended = ref(false)
 
 const isExtendable = ref(false)
 
+const COMPACT_RULE_NR = 10
+
 onMounted(() => {
   update_vis()
 })
@@ -63,8 +65,6 @@ const update_vis = () => {
     })
   }
 
-  const COMPACT_RULE_NR = 10
-
   isExtendable.value = rules.length > COMPACT_RULE_NR
   isExtended.value = isExtendable.value && isExtended.value
 
@@ -89,7 +89,7 @@ const update_vis = () => {
   }
 
   const svg_width = xs.value ? 300 : 1100
-  const padding_top = 30
+  const padding_top = 60
   const padding_bottom = 20
   let svg_height = padding_top + 20 * rules.length
 
@@ -115,6 +115,17 @@ const update_vis = () => {
       .selectAll("text")
       .style("font-size", "12px")
       .style("fill", "#888888")
+
+  // add a vertical line at first rule start position
+  if (props.type == "intervention") {
+    svg.append("line")
+        .attr("x1", x(rules[0].start_position))
+        .attr("y1", 0)
+        .attr("x2", x(rules[0].start_position))
+        .attr("y2", y)
+        .style("stroke", "#777777")
+        .style("stroke-width", 2)
+  }
 
   rules.forEach(d => {
 
@@ -200,7 +211,7 @@ const update_vis = () => {
         .attr("y1", prev_y)
         .attr("x2", x(d.start_position + +d.weight))
         .attr("y2", y + bar_height)
-        .style("stroke", "#525252")
+        .style("stroke", "#777777")
         .style("stroke-width", 2)
 
 
@@ -211,6 +222,16 @@ const update_vis = () => {
   svg.attr("height", svg_height)
   svg.attr("viewBox", [0, 0, svg_width, svg_height])
 
+  // add a line at the end of the last bar
+  if (props.type == "base") {
+    svg.append("line")
+        .attr("x1", x(rules[rules.length - 1].start_position + +rules[rules.length - 1].weight))
+        .attr("y1", y + bar_height)
+        .attr("x2", x(rules[rules.length - 1].start_position + +rules[rules.length - 1].weight))
+        .attr("y2", svg_height)
+        .style("stroke", "#777777")
+        .style("stroke-width", 2)
+  }
 
   d3.select(container.value).selectAll("*").remove()
   d3.select(container.value).node().append(svg.node())
@@ -220,10 +241,10 @@ const update_vis = () => {
 </script>
 
 <template>
-  <div class="justify-center overflow-x-auto overflow-y-hidden">
-    <div ref="container"></div>
-    <v-btn icon density="compact" @click="isExtended = !isExtended" variant="outlined" class="ml-2" size="40"
-           color="grey" v-if="isExtendable">
+  <div class="justify-center overflow-x-auto overflow-y-hidden position-relative">
+    <div class="ma-0 pa-0" ref="container"></div>
+    <v-btn icon density="compact" @click="isExtended = !isExtended" variant="outlined" size="40"
+           color="grey" style="position: absolute; bottom: 50px" v-if="isExtendable">
       <v-icon size="40">{{ isExtended ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
     </v-btn>
   </div>

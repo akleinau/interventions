@@ -31,7 +31,7 @@ const dataStore = useDataStore()
         </v-card-text>
 
         <v-btn class="ma-2 ma-auto" @click="dataStore.predict(); isActive.value = false" :disabled="!isActive" color="blue">
-          Add Intervention
+          Add/ Remove Intervention
         </v-btn>
 
       </v-card>
