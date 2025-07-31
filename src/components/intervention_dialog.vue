@@ -12,7 +12,7 @@ const dataStore = useDataStore()
   <v-dialog max-width="900px">
 
     <template v-slot:activator="{props: activatorProps}">
-      <v-btn v-bind="activatorProps">Add Intervention</v-btn>
+      <v-btn v-bind="activatorProps">Add/ Remove Intervention</v-btn>
     </template>
 
     <template v-slot:default="{ isActive}">

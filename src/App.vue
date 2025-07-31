@@ -51,7 +51,7 @@ const dataStore = useDataStore()
     <v-card class="mt-3 w-100"  v-if="Object.keys(dataStore.prediction).length !== 0">
 
       <v-card-title>
-        <h2>Prediction</h2>
+        <h2>Prediction of <span style="color: darkslategray">percentage astinent</span></h2>
       </v-card-title>
 
       <v-card-text>

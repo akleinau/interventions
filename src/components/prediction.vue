@@ -23,15 +23,20 @@ const dataStore = useDataStore()
 
     <!-- prediction base -->
     <div v-if="dataStore.stored_predictions['base'].value != null" class="mt-5 position-relative">
-      <h2 class="headline-in-figure"> (Prediction) Base group percentage abstinent: {{ dataStore.stored_predictions['base'].value.toFixed(2) }} % </h2>
+      <h2 class="headline-in-figure"> Base group abstinent: {{ dataStore.stored_predictions['base'].value.toFixed(2) }} % </h2>
       <two-sided-bar :rules="dataStore.stored_predictions['base'].rules" type="base" />
     </div>
 
 
     <!-- prediction test -->
     <div v-if="dataStore.prediction.value != null" class="position-relative" style="top:-5px">
-      <h2 class="headline-in-figure"> (Prediction) Intervention group percentage abstinent: {{ dataStore.prediction.value.toFixed(2) }} % </h2>
       <two-sided-bar :rules="dataStore.prediction.rules.filter((a:any) => a.new)" type="intervention" />
+      <h2 class="headline-in-figure bg-white text-grey-darken-1" v-if="dataStore.prediction.name == 'control'">
+        Control group abstinent: {{ dataStore.prediction.value.toFixed(2) }} %
+      </h2>
+      <h2 class="headline-in-figure bg-white" v-else>
+        Intervention group abstinent: {{ dataStore.prediction.value.toFixed(2) }} %
+      </h2>
     </div>
 
     <Intervention_Dialog v-if="dataStore.prediction.value != null" :intervention="dataStore.prediction.intervention" />
@@ -53,7 +58,8 @@ const dataStore = useDataStore()
   position: absolute;
   top: 0;
   text-align: center;
-  width: 100%;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 </style>

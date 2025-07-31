@@ -90,7 +90,7 @@ const update_vis = () => {
 
   const svg_width = xs.value ? 300 : 1100
   const padding_top = 60
-  const padding_bottom = 20
+  const padding_bottom = 30
   let svg_height = padding_top + 20 * rules.length
 
   let svg = d3.create("svg")
@@ -101,12 +101,12 @@ const update_vis = () => {
   // add a two-sided bar chart with one bar for each rule
   const max_weight = dataStore.max_weight * 3
   const x = d3.scaleLinear()
-      .domain([0, 100])
+      .domain([0, 50])
       .range([0, svg_width])
 
-  let y = padding_top
   const bar_height = 18
   const bar_padding = 5
+  let y = padding_top + 2*bar_padding
 
   // add x axis on top
   svg.append("g")
@@ -115,17 +115,6 @@ const update_vis = () => {
       .selectAll("text")
       .style("font-size", "12px")
       .style("fill", "#888888")
-
-  // add a vertical line at first rule start position
-  if (props.type == "intervention") {
-    svg.append("line")
-        .attr("x1", x(rules[0].start_position))
-        .attr("y1", 0)
-        .attr("x2", x(rules[0].start_position))
-        .attr("y2", y)
-        .style("stroke", "#777777")
-        .style("stroke-width", 2)
-  }
 
   rules.forEach(d => {
 
@@ -140,7 +129,7 @@ const update_vis = () => {
         .attr("y", y)
         .attr("width", rect_width)
         .attr("height", bar_height)
-        .attr("fill", d.weight > 0 ? "#647fd0" : "#da5e5e")
+        .attr("fill", d.weight > 0 ? "#5c80ee" : "#e15d5d")
 
     // add the text
     // first split the string when it is too long
@@ -218,9 +207,18 @@ const update_vis = () => {
   })
 
   // adapt the height of the svg
-  svg_height = y + padding_top + padding_bottom
+  svg_height = y + bar_height + padding_bottom
   svg.attr("height", svg_height)
   svg.attr("viewBox", [0, 0, svg_width, svg_height])
+
+  // add a vertical line at first rule start position
+  svg.append("line")
+      .attr("x1", x(rules[0].start_position))
+      .attr("y1", props.type == "intervention" ? 0 : padding_top)
+      .attr("x2", x(rules[0].start_position))
+      .attr("y2", padding_top + bar_height + 2*bar_padding)
+      .style("stroke", "#777777")
+      .style("stroke-width", 2)
 
   // add a line at the end of the last bar
   if (props.type == "base") {
@@ -244,7 +242,7 @@ const update_vis = () => {
   <div class="justify-center overflow-x-auto overflow-y-hidden position-relative">
     <div class="ma-0 pa-0" ref="container"></div>
     <v-btn icon density="compact" @click="isExtended = !isExtended" variant="outlined" size="40"
-           color="grey" style="position: absolute; bottom: 50px" v-if="isExtendable">
+           color="grey" style="position: absolute; bottom: 25px" v-if="isExtendable">
       <v-icon size="40">{{ isExtended ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
     </v-btn>
   </div>
