@@ -76,9 +76,9 @@ const update_vis = () => {
       .attr("x1", d => xScale(d.value))
       .attr("y1", 0)
       .attr("x2", d => xScale(d.value))
-      .attr("y2", 50)
-      .attr("stroke", d => d.highlight ? "#7ce1ac" : "#000000")
-      .attr("stroke-width", 2)
+      .attr("y2", d => d.highlight ? 70 : 50)
+      .attr("stroke", d => d.highlight ? "#6e09be" : "#000000")
+      .attr("stroke-width",d => d.highlight ? 3  :  2)
       .attr("transform", "translate(0, " + padding_top + ")")
       .on("click", (_, d) => {
         // when a line is clicked, set the prediction to the value of the line
@@ -93,11 +93,12 @@ const update_vis = () => {
       .enter()
       .append("text")
       .attr("x", d => xScale(d.value))
-      .attr("y", 70)
+      .attr("y",d => d.highlight ? 90 : 70)
       .attr("text-anchor", "end")
       .text(d => d.label)
       .style("font-size", "12px")
       .style("fill", "#333")
+      .style("font-weight", d => d.highlight ? "bold" : "normal")
       .attr("transform", d => "rotate(-45, " + (xScale(d.value) + padding_top) + ", 80)")
 
   // add the axis

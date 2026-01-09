@@ -31,10 +31,10 @@ const dataStore = useDataStore()
     <!-- prediction test -->
     <div v-if="dataStore.prediction.value != null" class="position-relative" style="top:-5px">
       <two-sided-bar :rules="dataStore.prediction.rules.filter((a:any) => a.new)" type="intervention" />
-      <h2 class="headline-in-figure bg-white text-grey-darken-1" v-if="dataStore.prediction.name == 'control'">
+      <h2 class="headline-in-figure bg-white text-purple-darken-1" v-if="dataStore.prediction.name == 'control'">
         Control group abstinent: {{ dataStore.prediction.value.toFixed(2) }} %
       </h2>
-      <h2 class="headline-in-figure bg-white" v-else>
+      <h2 class="headline-in-figure bg-white text-purple-darken-1" v-else>
         Intervention group abstinent: {{ dataStore.prediction.value.toFixed(2) }} %
       </h2>
     </div>
