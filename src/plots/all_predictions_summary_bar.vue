@@ -3,8 +3,11 @@
 import {useDataStore} from "../stores/data_store";
 import {onMounted, useTemplateRef, watch} from "vue";
 import * as d3 from "d3";
+import {useVisualizationStore} from "../stores/VisualizationStore.ts";
 
 const dataStore = useDataStore()
+
+const visStore = useVisualizationStore()
 
 onMounted(() => {
   update_vis()
@@ -32,12 +35,13 @@ const update_vis = () => {
 
   d3.select(container.value).selectAll("*").remove()
 
+  const width = visStore.getSVGWidth()
   const padding_top = 20
 
   let svg = d3.create("svg")
-      .attr("width", 600)
+      .attr("width", width)
       .attr("height", 200)
-      .attr("viewBox", [0, 0, 400, 200])
+      .attr("viewBox", [0, 0, width, 200])
 
   // create a list of all predictions and their corresponding labels
   let predictions = [] as PredictionSummary[]
@@ -54,13 +58,11 @@ const update_vis = () => {
 
 
   // create a scale for the x-axis
-  let xScale = d3.scaleLinear()
-      .domain([0, d3.max(predictions, d => d.value) * 1.3])
-      .range([0, 400])
+  let xScale = visStore.getXScale()
 
   // create the box where the predictions will be displayed
   svg.append("rect")
-      .attr("width", 400)
+      .attr("width", width)
       .attr("height", 50)
       .attr("fill", "#f0f0f0")
       .attr("stroke", "#ccc")

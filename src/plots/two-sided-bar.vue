@@ -4,8 +4,10 @@ import {onMounted, ref, useTemplateRef, watch} from "vue";
 import {useDataStore} from "../stores/data_store";
 import {useDisplay} from 'vuetify'
 import {type Rule} from "../interfaces.ts"
+import {useVisualizationStore} from "../stores/VisualizationStore.ts";
 
 const dataStore = useDataStore()
+const visStore = useVisualizationStore()
 
 const container = useTemplateRef('container')
 
@@ -36,6 +38,8 @@ watch(() => props.rules, () => {
 const {xs} = useDisplay()
 
 const update_vis = () => {
+
+  visStore.setSVGWidth(xs.value)
 
   let rules = props.rules as Rule[]
 
@@ -88,24 +92,23 @@ const update_vis = () => {
 
   }
 
-  const svg_width = xs.value ? 300 : 1100
+  const svg_width = visStore.svgWidth
   const padding_top = 60
   const padding_bottom = 30
   let svg_height = padding_top + 20 * rules.length
 
   let svg = d3.create("svg")
-      .attr("width", svg_width + 20)
+      .attr("width", svg_width)
       .attr("height", svg_height)
       .attr("viewBox", [0, 0, svg_width, svg_height])
 
   // add a two-sided bar chart with one bar for each rule
   const max_weight = dataStore.max_weight * 3
-  const x = d3.scaleLinear()
-      .domain([0, 50])
-      .range([0, svg_width])
+  const x = visStore.getXScale()
 
   const bar_height = 18
   const bar_padding = 5
+
   let y = padding_top + 2*bar_padding
 
   // add x axis on top
@@ -119,7 +122,7 @@ const update_vis = () => {
   rules.forEach(d => {
 
     const rect_start = d.weight >= 0 ? x(d.start_position) : x(d.start_position + +d.weight)
-    const rect_width = Math.abs(Math.abs(x(d.weight)) - x(0))
+    const rect_width = Math.abs(x(Math.abs(d.weight)) - x(0))
     const space_left = rect_start
     const space_right = svg_width - (rect_start + rect_width)
 
@@ -221,7 +224,7 @@ const update_vis = () => {
       .style("stroke-width", 2)
 
   // add a line at the end of the last bar
-  if (props.type == "base") {
+
     svg.append("line")
         .attr("x1", x(rules[rules.length - 1].start_position + +rules[rules.length - 1].weight))
         .attr("y1", y + bar_height)
@@ -229,7 +232,7 @@ const update_vis = () => {
         .attr("y2", svg_height)
         .style("stroke", "#777777")
         .style("stroke-width", 2)
-  }
+
 
   d3.select(container.value).selectAll("*").remove()
   d3.select(container.value).node().append(svg.node())
