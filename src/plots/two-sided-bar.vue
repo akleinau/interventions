@@ -18,6 +18,8 @@ const isExtended = ref(false)
 const isExtendable = ref(false)
 
 const COMPACT_RULE_NR = 10
+const lineColor = "#777777"
+const lineWidth = 2
 
 onMounted(() => {
   update_vis()
@@ -94,7 +96,7 @@ const update_vis = () => {
 
   const svg_width = visStore.svgWidth
   const padding_top = 60
-  const padding_bottom = 30
+  const padding_bottom = 50
   let svg_height = padding_top + 20 * rules.length
 
   let svg = d3.create("svg")
@@ -199,12 +201,12 @@ const update_vis = () => {
 
     // add line going down to next bar
     svg.append("line")
-        .attr("x1", x(d.start_position + +d.weight))
-        .attr("y1", prev_y)
-        .attr("x2", x(d.start_position + +d.weight))
-        .attr("y2", y + bar_height)
-        .style("stroke", "#777777")
-        .style("stroke-width", 2)
+      .attr("x1", x(d.start_position + +d.weight))
+      .attr("y1", prev_y)
+      .attr("x2", x(d.start_position + +d.weight))
+      .attr("y2", y + bar_height)
+      .style("stroke", lineColor)
+      .style("stroke-width", lineWidth)
 
 
   })
@@ -215,23 +217,23 @@ const update_vis = () => {
   svg.attr("viewBox", [0, 0, svg_width, svg_height])
 
   // add a vertical line at first rule start position
-  svg.append("line")
+    svg.append("line")
       .attr("x1", x(rules[0].start_position))
       .attr("y1", props.type == "intervention" ? 0 : padding_top)
       .attr("x2", x(rules[0].start_position))
       .attr("y2", padding_top + bar_height + 2*bar_padding)
-      .style("stroke", "#777777")
-      .style("stroke-width", 2)
+      .style("stroke", lineColor)
+      .style("stroke-width", lineWidth)
 
   // add a line at the end of the last bar
 
     svg.append("line")
-        .attr("x1", x(rules[rules.length - 1].start_position + +rules[rules.length - 1].weight))
-        .attr("y1", y + bar_height)
-        .attr("x2", x(rules[rules.length - 1].start_position + +rules[rules.length - 1].weight))
-        .attr("y2", svg_height)
-        .style("stroke", "#777777")
-        .style("stroke-width", 2)
+      .attr("x1", x(rules[rules.length - 1].start_position + +rules[rules.length - 1].weight))
+      .attr("y1", y + bar_height)
+      .attr("x2", x(rules[rules.length - 1].start_position + +rules[rules.length - 1].weight))
+      .attr("y2", svg_height)
+      .style("stroke", lineColor)
+      .style("stroke-width", lineWidth)
 
 
   d3.select(container.value).selectAll("*").remove()

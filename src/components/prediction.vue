@@ -31,18 +31,21 @@ const dataStore = useDataStore()
     <!-- prediction test -->
     <div v-if="dataStore.prediction.value != null" class="position-relative" style="top:-5px">
       <two-sided-bar :rules="dataStore.prediction.rules.filter((a:any) => a.new)" type="intervention" />
+
       <h2 class="headline-in-figure bg-white text-purple-darken-1" v-if="dataStore.prediction.name == 'control'">
         Control group abstinent: {{ dataStore.prediction.value.toFixed(2) }} %
       </h2>
       <h2 class="headline-in-figure bg-white text-purple-darken-1" v-else>
         Intervention group abstinent: {{ dataStore.prediction.value.toFixed(2) }} %
       </h2>
+      <div class="footer-in-figure">
+      <Intervention_Dialog v-if="dataStore.prediction.value != null" :intervention="dataStore.prediction.intervention"
+       class="footer-in-figure"/>
+      </div>
+
     </div>
 
-    <Intervention_Dialog v-if="dataStore.prediction.value != null" :intervention="dataStore.prediction.intervention" />
-
-
-    <all_predictions_summary class="mt-5" />
+    <all_predictions_summary class="position-relative" style="top:-10px"/>
 
 
 
@@ -57,6 +60,14 @@ const dataStore = useDataStore()
 .headline-in-figure{
   position: absolute;
   top: 0;
+  text-align: center;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.footer-in-figure{
+  position: absolute;
+  bottom: 20px;
   text-align: center;
   left: 50%;
   transform: translateX(-50%);

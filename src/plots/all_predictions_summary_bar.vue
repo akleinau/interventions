@@ -36,7 +36,7 @@ const update_vis = () => {
   d3.select(container.value).selectAll("*").remove()
 
   const width = visStore.getSVGWidth()
-  const padding_top = 20
+  const padding_top = 50
 
   let svg = d3.create("svg")
       .attr("width", width)
@@ -76,12 +76,11 @@ const update_vis = () => {
       .enter()
       .append("line")
       .attr("x1", d => xScale(d.value))
-      .attr("y1", 0)
+      .attr("y1", d => d.highlight ? 0 : padding_top)
       .attr("x2", d => xScale(d.value))
-      .attr("y2", d => d.highlight ? 70 : 50)
-      .attr("stroke", d => d.highlight ? "#6e09be" : "#000000")
-      .attr("stroke-width",d => d.highlight ? 3  :  2)
-      .attr("transform", "translate(0, " + padding_top + ")")
+      .attr("y2", d => padding_top + (d.highlight ? 70 : 50))
+      .attr("stroke", d => d.highlight ? "#777777" : "#000000")
+      .attr("stroke-width",d => d.highlight ? 2 :  2)
       .on("click", (_, d) => {
         // when a line is clicked, set the prediction to the value of the line
         if (d.name !== null) {
@@ -99,9 +98,9 @@ const update_vis = () => {
       .attr("text-anchor", "end")
       .text(d => d.label)
       .style("font-size", "12px")
-      .style("fill", "#333")
+      .style("fill", d => d.highlight ? "#6e09be" :"#333")
       .style("font-weight", d => d.highlight ? "bold" : "normal")
-      .attr("transform", d => "rotate(-45, " + (xScale(d.value) + padding_top) + ", 80)")
+      .attr("transform", d => "rotate(-45, " + (xScale(d.value) + padding_top) + ", " + (d.highlight ? 100 : 80) + ")")
 
   // add the axis
   svg.append("g")
