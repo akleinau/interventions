@@ -3,6 +3,8 @@
 import {useDataStore} from "../stores/data_store";
 import {onMounted, ref} from "vue";
 import Data_input_items from "./data_input_items.vue";
+import * as d3 from "d3";
+
 
 let dataStore = useDataStore()
 
@@ -44,6 +46,12 @@ async function get_labels() {
   console.log(response)
   dataStore.labels = response
 }
+
+// Load dataset from CSV
+d3.csv(dataStore.data_address).then(data => {
+    dataStore.dataset = data;
+    console.log("Dataset loaded:", dataStore.dataset);
+});
 
 </script>
 

@@ -6,6 +6,8 @@ export const useDataStore = defineStore({
     state: () => ({
         address: "https://pred.hbcptools.org/api/" as string,
         //address: "http://localhost:5000/" as string,
+        data_address: "https://raw.githubusercontent.com/HumanBehaviourChangeProject/semantic-prediction/refs/heads/main/data/model_input_data.csv" as string,
+        dataset: [] as any[],
         input_params: {} as { [key: string]: any },
         input_interventions: {} as { [key: string]: any },
         input_spec: {} as { [key: string]: any },
