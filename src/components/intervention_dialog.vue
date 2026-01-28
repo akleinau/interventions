@@ -99,10 +99,14 @@ const interventionCounts = computed(() => {
 
 // Get the top most used interventions
 const topInterventions = computed(() => {
-  const countsArray = Object.entries(interventionCounts.value).map(([key, data]) => ({
-    key: key,
-    ...data
-  }));
+  const selectedFeatures = getSelectedFeatures();
+  
+  const countsArray = Object.entries(interventionCounts.value)
+    .filter(([key, data]) => !selectedFeatures.includes(dataStore.labels[key]?.featurename))
+    .map(([key, data]) => ({
+      key: key,
+      ...data
+    }));
 
   return countsArray
     .sort((a, b) => b.count - a.count)
@@ -185,7 +189,7 @@ const combinationRecommendations = computed(() => {
           
           <!-- Quick Recommendations -->
           <div v-if="topInterventions.length > 0" class="mb-5">
-            <h3 class="mb-3">Quick Recommendations (Top {{ topInterventionsCount }} Most Used)</h3>
+            <h3 class="mb-3">Often Used</h3>
             <div class="d-flex flex-wrap ga-2">
               <v-chip
                 v-for="intervention in topInterventions"
@@ -227,7 +231,7 @@ const combinationRecommendations = computed(() => {
 
            <!-- interventions -->
           <div v-if="dataStore.input_spec.interventions !== null" class="mt-5">
-            <h2>Interventions</h2>
+            <h2>All Interventions</h2>
             <v-container>
               <v-row v-for="(param, index) in dataStore.input_spec.interventions" :key="index">
                 <data_input_items :param="param" :model="dataStore.input_interventions" class="pa-0"/>
