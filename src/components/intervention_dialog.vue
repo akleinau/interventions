@@ -9,35 +9,68 @@ const dataStore = useDataStore()
 
 const topInterventionsCount = 5;
 
-// Calculate how often each intervention-related item appears in the dataset
-const interventionCounts = computed(() => {
-  if (!dataStore.dataset || dataStore.dataset.length === 0 || !dataStore.labels) {
-    return {};
-  }
+// Helper function to find matching column in a row by removing parentheses
+const findMatchingColumn = (row: any, featurename: string): string | undefined => {
+  return Object.keys(row).find(col => {
+    const cleanedCol = col.replace(/\s*\(\d+\)\s*$/, '').trim();
+    return cleanedCol === featurename;
+  });
+};
 
-  const counts: { [key: string]: { count: number, total: number, percentage: number, label: string, group: string } } = {};
+// Helper function to check if a value is 1
+const isValueOne = (value: any): boolean => {
+  return value === 1 || value === '1';
+};
 
-  // Find which labels are interventions, pharmacological, delivery, or source
-  const interventionLabels = Object.keys(dataStore.labels).filter(
+// Helper function to get all intervention-related labels
+const getInterventionLabels = (): string[] => {
+  if (!dataStore.labels) return [];
+  return Object.keys(dataStore.labels).filter(
     key => ['intervention', 'pharmacological', 'delivery', 'source'].includes(dataStore.labels[key].group)
   );
+};
 
-  // For each intervention, use its featurename to find the column in the dataset
+// Helper function to get currently selected features
+const getSelectedFeatures = (): string[] => {
+  const selectedFeatures: string[] = [];
+  
+  if (dataStore.input_interventions.intervention && Array.isArray(dataStore.input_interventions.intervention)) {
+    selectedFeatures.push(...dataStore.input_interventions.intervention);
+  }
+  
+  if (dataStore.input_interventions.delivery && Array.isArray(dataStore.input_interventions.delivery)) {
+    selectedFeatures.push(...dataStore.input_interventions.delivery);
+  }
+  
+  if (dataStore.input_interventions.source && Array.isArray(dataStore.input_interventions.source)) {
+    selectedFeatures.push(...dataStore.input_interventions.source);
+  }
+  
+  if (dataStore.input_interventions.pharmacological) {
+    selectedFeatures.push(dataStore.input_interventions.pharmacological);
+  }
+  
+  return selectedFeatures;
+};
+
+// Helper function to calculate item counts in given rows
+const calculateItemCounts = (rows: any[], excludeFeatures: string[] = []) => {
+  const counts: { [key: string]: { count: number, total: number, percentage: number, label: string, group: string } } = {};
+  const interventionLabels = getInterventionLabels();
+
   interventionLabels.forEach(labelKey => {
     const featurename = dataStore.labels[labelKey].featurename;
+    
+    if (excludeFeatures.includes(featurename)) {
+      return;
+    }
+
     let count = 0;
-    const total = dataStore.dataset.length;
+    const total = rows.length;
 
-    dataStore.dataset.forEach((row: any) => {
-      // Find the matching column by removing parentheses and numbers from dataset column names
-      const matchingColumn = Object.keys(row).find(col => {
-        // Remove text in parentheses (e.g., " (1)", " (2)") from the column name
-        const cleanedCol = col.replace(/\s*\(\d+\)\s*$/, '').trim();
-        return cleanedCol === featurename;
-      });
-
-      // Check if the value is 1 (accounting for string "1" or number 1)
-      if (matchingColumn && (row[matchingColumn] === 1 || row[matchingColumn] === '1')) {
+    rows.forEach((row: any) => {
+      const matchingColumn = findMatchingColumn(row, featurename);
+      if (matchingColumn && isValueOne(row[matchingColumn])) {
         count++;
       }
     });
@@ -54,6 +87,14 @@ const interventionCounts = computed(() => {
   });
 
   return counts;
+};
+
+// Calculate how often each intervention-related item appears in the dataset
+const interventionCounts = computed(() => {
+  if (!dataStore.dataset || dataStore.dataset.length === 0 || !dataStore.labels) {
+    return {};
+  }
+  return calculateItemCounts(dataStore.dataset);
 });
 
 // Get the top most used interventions
@@ -63,7 +104,6 @@ const topInterventions = computed(() => {
     ...data
   }));
 
-  // Sort by count in descending order and take the top N
   return countsArray
     .sort((a, b) => b.count - a.count)
     .slice(0, topInterventionsCount);
@@ -76,10 +116,8 @@ const selectIntervention = (interventionKey: string) => {
   
   if (featurename && group) {
     if (group === 'pharmacological') {
-      // For pharmacological, set as a single string value (not an array)
       dataStore.input_interventions.pharmacological = featurename;
     } else {
-      // For other groups, add to array
       if (!dataStore.input_interventions[group]) {
         dataStore.input_interventions[group] = [];
       }
@@ -89,10 +127,47 @@ const selectIntervention = (interventionKey: string) => {
       }
     }
     
-    // Trigger prediction immediately
     dataStore.predict();
   }
 };
+
+// Calculate recommendations based on items often used with currently selected items
+const combinationRecommendations = computed(() => {
+  if (!dataStore.dataset || dataStore.dataset.length === 0 || !dataStore.labels || !dataStore.input_interventions) {
+    return [];
+  }
+
+  const selectedFeatures = getSelectedFeatures();
+
+  if (selectedFeatures.length === 0) {
+    return [];
+  }
+
+  // Filter dataset to rows that contain ALL selected items
+  const filteredRows = dataStore.dataset.filter((row: any) => {
+    return selectedFeatures.every(feature => {
+      const matchingColumn = findMatchingColumn(row, feature);
+      return matchingColumn && isValueOne(row[matchingColumn]);
+    });
+  });
+
+  if (filteredRows.length === 0) {
+    return [];
+  }
+
+  // Calculate counts for items in filtered rows, excluding already selected items
+  const counts = calculateItemCounts(filteredRows, selectedFeatures);
+
+  // Convert to array and sort by count
+  const countsArray = Object.entries(counts).map(([key, data]) => ({
+    key: key,
+    ...data
+  }));
+
+  return countsArray
+    .sort((a, b) => b.count - a.count)
+    .slice(0, topInterventionsCount);
+});
 
 </script>
 
@@ -124,6 +199,27 @@ const selectIntervention = (interventionKey: string) => {
                 {{ intervention.label }}
                 <v-tooltip activator="parent" location="top">
                   Used in {{ intervention.count }} of {{ intervention.total }} cases ({{ intervention.percentage.toFixed(1) }}%)
+                </v-tooltip>
+              </v-chip>
+            </div>
+          </div>
+
+          <!-- Combination Recommendations -->
+          <div v-if="combinationRecommendations.length > 0" class="mb-5">
+            <h3 class="mb-3">Often Used in Combination</h3>
+            <div class="d-flex flex-wrap ga-2">
+              <v-chip
+                v-for="item in combinationRecommendations"
+                :key="item.key"
+                @click="selectIntervention(item.key); isActive.value = false"
+                color="secondary"
+                variant="outlined"
+                label
+                class="cursor-pointer"
+              >
+                {{ item.label }}
+                <v-tooltip activator="parent" location="top">
+                  Used in {{ item.count }} of {{ item.total }} matching cases ({{ item.percentage.toFixed(1) }}%)
                 </v-tooltip>
               </v-chip>
             </div>
