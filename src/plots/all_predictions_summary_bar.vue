@@ -81,8 +81,28 @@ const update_vis = () => {
       .attr("y2", d => padding_top + (d.highlight ? 70 : 50))
       .attr("stroke", d => d.highlight ? "#777777" : "#000000")
       .attr("stroke-width",d => d.highlight ? 2 :  2)
+      .style("cursor", "pointer")
       .on("click", (_, d) => {
         // when a line is clicked, set the prediction to the value of the line
+        if (d.name !== null) {
+          dataStore.set_prediction(d.name)
+        }
+      })
+
+  // add invisible wider lines for easier clicking
+  svg.selectAll(".click-line")
+      .data(predictions)
+      .enter()
+      .append("line")
+      .attr("class", "click-line")
+      .attr("x1", d => xScale(d.value))
+      .attr("y1", d => d.highlight ? 0 : padding_top)
+      .attr("x2", d => xScale(d.value))
+      .attr("y2", d => padding_top + (d.highlight ? 70 : 50))
+      .attr("stroke", "transparent")
+      .attr("stroke-width", 10)
+      .style("cursor", "pointer")
+      .on("click", (_, d) => {
         if (d.name !== null) {
           dataStore.set_prediction(d.name)
         }
@@ -100,7 +120,14 @@ const update_vis = () => {
       .style("font-size", "12px")
       .style("fill", d => d.highlight ? "#6e09be" :"#333")
       .style("font-weight", d => d.highlight ? "bold" : "normal")
+      .style("cursor", "pointer")
       .attr("transform", d => "rotate(-45, " + (xScale(d.value) + padding_top) + ", " + (d.highlight ? 100 : 80) + ")")
+      .on("click", (_, d) => {
+        // when text is clicked, set the prediction
+        if (d.name !== null) {
+          dataStore.set_prediction(d.name)
+        }
+      })
 
   // add the axis
   svg.append("g")

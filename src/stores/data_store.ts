@@ -187,12 +187,29 @@ export const useDataStore = defineStore({
             else if (name == "current") {
                 this.prediction = this.stored_predictions["current"]
             }
-            else if (name.slice(0,6) == "stored"  && Object.keys(this.stored_predictions).length > 0) {
-                // get the prediction from the stored predictions
+            else if (Object.keys(this.stored_predictions).length > 0 && this.stored_predictions[name] !== undefined) {
+                this.prediction = this.stored_predictions[name]
             }
             else {
                 console.error("Unknown prediction name:", name)
             }
+        },
+
+        save_prediction(name: string) {
+            if (!name || name.trim() === "") {
+                console.error("Cannot save prediction without a name")
+                return false
+            }
+            
+            // Create a copy of the current prediction with the given name
+            const savedPrediction = {
+                ...this.prediction,
+                name: name.trim()
+            }
+            
+            this.stored_predictions[name.trim()] = savedPrediction
+            console.log(`Prediction saved as: ${name}`)
+            return true
         }
     }
 
